@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <h1>Hello World</h1>
+  <p>Welcome to verify cats, a website developed by dogs?</p>
+  {% load static %}
+  <img src="{% static 'images/cat.png' %}" alt="Cat" style="width:555px;height:540px;">
+{% endblock %}
