@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  {% block title %}<title>Hello World</title>{% endblock %}
+  {% block title %}<title>Verify Cats</title>{% endblock %}
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
@@ -17,6 +17,8 @@
         <ul class="sidebar-nav">
           {% if user.is_authenticated %}
             <li>User: {{ user.get_username }}</li>
+            <li><a href="{% url 'hello_world' %}">Home</a></li>
+            <li><a href="{% url 'events' %}">All Events</a></li>
             <li><a href="{% url 'logout'%}?next={{request.path}}">Logout</a></li>
           {% else %}
             <li><a href="{% url 'login'%}?next={{request.path}}">Login</a></li>

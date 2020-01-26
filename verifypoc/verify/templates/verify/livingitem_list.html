@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <h1>Event List</h1>
+  <h3>Places you have lived</h3>
+  {% if object_list %}
+  <ul>
+    {% for object in object_list %}
+        {{ object.address }}
+    {% endfor %}
+    <li><a href="{% url 'add_event' %}">Add Event</a></li>
+  </ul>
+  {% else %}
+    <p>You have not added any addresses</p>
+     <li><a href="{% url 'add_event' %}">Add Event</a></li>
+  {% endif %}
+{% endblock %}
