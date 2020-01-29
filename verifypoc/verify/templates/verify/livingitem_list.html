@@ -2,16 +2,28 @@
 
 {% block content %}
   <h1>Event List</h1>
-  <h3>Places you have lived</h3>
-  {% if object_list %}
+  <h3>Places you have Lived</h3>
+  {% if my_event_list %}
   <ul>
-    {% for object in object_list %}
+    {% for object in my_event_list %}
         {{ object.address }}
     {% endfor %}
-    <li><a href="{% url 'add_event' %}">Add Event</a></li>
+    <li><a href="{% url 'add_event' %}">Add Living Event</a></li>
   </ul>
   {% else %}
     <p>You have not added any addresses</p>
-     <li><a href="{% url 'add_event' %}">Add Event</a></li>
+     <li><a href="{% url 'add_event' %}">Add Living Event</a></li>
+  {% endif %}
+   <h3>Places you have Worked</h3>
+  {% if work_history_list %}
+  <ul>
+    {% for object in work_history_list %}
+        {{ object.work_place }}
+    {% endfor %}
+    <li><a href="{% url 'add_work_event' %}">Add Work Event</a></li>
+  </ul>
+  {% else %}
+    <p>You have not added any Work places</p>
+     <li><a href="{% url 'add_work_event' %}">Add Work Event</a></li>
   {% endif %}
 {% endblock %}
