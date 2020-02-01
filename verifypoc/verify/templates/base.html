@@ -19,7 +19,8 @@
             <li>User: {{ user.get_username }}</li>
             <li><a href="{% url 'hello_world' %}">Home</a></li>
             <li><a href="{% url 'events' %}">All Events</a></li>
-            <li><a href="{% url 'update_profile' %}">Profile</a></li>
+            <li><a href="{% url 'profile' %}">Profile</a></li>
+            <li><a href="{% url 'update_profile' %}">Edit Profile</a></li>
             <li><a href="{% url 'logout'%}?next={{request.path}}">Logout</a></li>
           {% else %}
             <li><a href="{% url 'login'%}?next={{request.path}}">Login</a></li>

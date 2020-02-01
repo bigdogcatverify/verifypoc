@@ -6,7 +6,9 @@
   {% if my_event_list %}
   <ul>
     {% for object in my_event_list %}
-        {{ object.address }}
+       {% if object.address %}
+         {{ object.address }} {{ object.start_date }} - {{ object.end_date }}
+      {% endif %}
     {% endfor %}
     <li><a href="{% url 'add_event' %}">Add Living Event</a></li>
   </ul>
@@ -18,7 +20,9 @@
   {% if work_history_list %}
   <ul>
     {% for object in work_history_list %}
-        {{ object.work_place }}
+      {% if object.work_place %}
+        {{ object.work_place }} {{ object.start_date }} - {{ object.end_date }}
+      {% endif %}
     {% endfor %}
     <li><a href="{% url 'add_work_event' %}">Add Work Event</a></li>
   </ul>

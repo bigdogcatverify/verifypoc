@@ -10,7 +10,7 @@ from django.db import transaction
 from django.contrib import messages
 from django.utils.translation import ugettext_lazy as _
 
-from .models import LivingItem, WorkItem
+from .models import LivingItem, WorkItem, User, Profile
 from .forms import EnterLivingForm, EnterWorkForm, UserForm, ProfileForm
 
 
@@ -101,7 +101,7 @@ def update_profile(request):
             messages.success(request, _('Profile successfully updated'))
             return redirect('hello_world')
         else:
-            messages.error(request, _('Please fix the erros'))
+            messages.error(request, _('Please fix the errors'))
     else:
         user_form = UserForm(instance=request.user)
         profile_form = ProfileForm(instance=request.user.profile)
@@ -110,3 +110,19 @@ def update_profile(request):
         'profile_form': profile_form
     })
 
+
+class ProfileListView(LoginRequiredMixin, generic.ListView):
+    model = User
+    context_object_name = 'my_profile_list'
+    template_name = 'verify/profile_list.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(ProfileListView, self).get_context_data(**kwargs)
+        context.update({
+            'profile_list': Profile.objects.all(),
+        })
+
+        return context
+
+    def get_queryset(self):
+        return User.objects.filter(username=self.request.user)

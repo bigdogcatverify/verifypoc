@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <h1>Profile</h1>
+  {% if my_profile_list %}
+  <ul>
+      {% for object in my_profile_list %}
+      <li>First Name: {{ object.first_name }}</li>
+      <li>Last Name: {{ object.last_name }}</li>
+      <li>Email: {{ object.email }}</li>
+      {% endfor %}
+      {% for object in profile_list %}
+      {% if object.location %}
+      <li>Location: {{ object.location }}</li>
+      <li>DOB: {{ object.birth_date }}</li>
+      {% endif %}
+      {% endfor %}
+    <li><a href="{% url 'update_profile' %}">Edit Profile</a></li>
+  </ul>
+  {% endif %}
+{% endblock %}
