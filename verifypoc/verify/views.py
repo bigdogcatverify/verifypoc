@@ -1,14 +1,17 @@
 import datetime
 
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.views import generic
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db import transaction
+from django.contrib import messages
+from django.utils.translation import ugettext_lazy as _
 
 from .models import LivingItem, WorkItem
-from .forms import EnterLivingForm, EnterWorkForm
+from .forms import EnterLivingForm, EnterWorkForm, UserForm, ProfileForm
 
 
 @login_required
@@ -84,3 +87,26 @@ def add_work_event(request):
     }
 
     return render(request, 'verify/event_added.html', context)
+
+
+@login_required
+@transaction.atomic
+def update_profile(request):
+    if request.method == 'POST':
+        user_form = UserForm(request.POST, instance=request.user)
+        profile_form = ProfileForm(request.POST, instance=request.user.profile)
+        if user_form.is_valid() and profile_form.is_valid():
+            user_form.save()
+            profile_form.save()
+            messages.success(request, _('Profile successfully updated'))
+            return redirect('hello_world')
+        else:
+            messages.error(request, _('Please fix the erros'))
+    else:
+        user_form = UserForm(instance=request.user)
+        profile_form = ProfileForm(instance=request.user.profile)
+    return render(request, 'verify/profile.html' , {
+        'user_form': user_form,
+        'profile_form': profile_form
+    })
+

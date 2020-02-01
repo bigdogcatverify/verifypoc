@@ -3,6 +3,7 @@ import datetime
 from django import forms
 from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
+from .models import User, Profile
 
 
 class EnterLivingForm(forms.Form):
@@ -71,3 +72,13 @@ class EnterWorkForm(forms.Form):
             raise ValidationError(_('Invalid end date - before start date'))
 
 
+class UserForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ('first_name', 'last_name', 'email')
+
+
+class ProfileForm(forms.ModelForm):
+    class Meta:
+        model = Profile
+        fields = ('location',)
