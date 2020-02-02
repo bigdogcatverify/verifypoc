@@ -89,7 +89,8 @@ class ProfileForm(forms.ModelForm):
 class RequesterSignUpForm(UserCreationForm):
     class Meta:
         model = User
-        fields = '__all__'
+        fields = ('username', 'first_name',
+                  'last_name', 'email', 'is_verifier')
 
     def save(self):
         user = super().save(commit=False)
@@ -101,7 +102,8 @@ class RequesterSignUpForm(UserCreationForm):
 class VerifierSignUpForm(UserCreationForm):
     class Meta(UserCreationForm.Meta):
         model = User
-        fields = '__all__'
+        fields = ('username', 'first_name',
+                  'last_name', 'email', 'is_verifier')
 
     def save(self, commit=True):
         user = super().save(commit=False)

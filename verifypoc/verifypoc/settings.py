@@ -128,3 +128,4 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 AUTH_USER_MODEL = 'verify.User'
 
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
