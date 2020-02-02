@@ -9,9 +9,11 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import transaction
 from django.contrib import messages
 from django.utils.translation import ugettext_lazy as _
+from django.contrib.auth import login
 
 from .models import LivingItem, WorkItem, User, Profile
-from .forms import EnterLivingForm, EnterWorkForm, UserForm, ProfileForm
+from .forms import EnterLivingForm, EnterWorkForm, UserForm, ProfileForm, RequesterSignUpForm, VerifierSignUpForm
+from .decorators import verifier_required, requester_required
 
 
 @login_required
@@ -126,3 +128,38 @@ class ProfileListView(LoginRequiredMixin, generic.ListView):
 
     def get_queryset(self):
         return User.objects.filter(username=self.request.user)
+
+
+class RequesterSignUpView(generic.CreateView):
+    model = User
+    form_class = RequesterSignUpForm
+    template_name = 'registration/signup_form.html'
+
+    def get_context_data(self, **kwargs):
+        kwargs['user_type'] = 'requester'
+        return super().get_context_data(**kwargs)
+
+    def from_valid(self, form):
+        user = form.save()
+        login(self.request, user)
+        return redirect('hello_world')
+
+
+class VerifierSignUpView(generic.CreateView):
+    model = User
+    form_class = VerifierSignUpForm
+    template_name = 'registration/signup_form.html'
+
+    def get_context_data(self, **kwargs):
+        kwargs['user_type'] = 'verifier'
+        return super().get_context_data(**kwargs)
+
+    def form(self, form):
+        user = form.save()
+        login(self.request, user)
+        return redirect('hello_world')
+
+
+class StandardSignUpView(generic.TemplateView):
+    template_name = 'registration/signup.html'
+

@@ -15,9 +15,13 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import include, path
+from verify import views
 
 urlpatterns = [
-    path('verify', include('verify.urls')),
+    path('', include('verify.urls')),
     path('admin/', admin.site.urls),
     path('accounts/', include('django.contrib.auth.urls')),
+    path('accounts/signup/', views.StandardSignUpView.as_view(), name='signup'),
+    path('accounts/signup/requester/', views.RequesterSignUpView.as_view(), name='requester_signup'),
+    path('accounts/signup/verifier/', views.VerifierSignUpView.as_view(), name='verifier_signup'),
 ]

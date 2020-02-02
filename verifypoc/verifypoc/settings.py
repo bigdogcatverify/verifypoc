@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'crispy_forms',
     'verify',
 ]
 
@@ -124,3 +125,6 @@ STATIC_URL = '/static/'
 LOGIN_REDIRECT_URL = '/verify'
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+AUTH_USER_MODEL = 'verify.User'
+

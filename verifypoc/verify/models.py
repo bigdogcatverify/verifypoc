@@ -1,7 +1,7 @@
 from django.db import models
-from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.contrib.auth.models import AbstractUser
 
 
 class LivingItem(models.Model):
@@ -46,6 +46,11 @@ class WorkItem(models.Model):
     def __str__(self):
         """String representing the living Item"""
         return self.work_place
+
+
+class User(AbstractUser):
+    is_requester = models.BooleanField(default=False)
+    is_verifier = models.BooleanField(default=False)
 
 
 class Profile(models.Model):
