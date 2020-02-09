@@ -5,7 +5,7 @@ from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.forms import UserCreationForm
 from django.db import transaction
-from .models import User, Profile
+from .models import User, Profile, Businesses, LivingItem
 
 
 class EnterLivingForm(forms.Form):
@@ -21,9 +21,8 @@ class EnterLivingForm(forms.Form):
         required=True,
         help_text="Address of where you loved"
     )
-    verifier = forms.CharField(
-        required=True,
-        help_text="The person to verify this"
+    verifier = forms.ModelChoiceField(
+        queryset=Businesses.objects.all().order_by('business_name')
     )
 
     def start_date_correct(self):
@@ -87,10 +86,10 @@ class ProfileForm(forms.ModelForm):
 
 
 class RequesterSignUpForm(UserCreationForm):
-    class Meta:
+    class Meta(UserCreationForm.Meta):
         model = User
         fields = ('username', 'first_name',
-                  'last_name', 'email', 'is_verifier')
+                  'last_name', 'email',)
 
     def save(self):
         user = super().save(commit=False)
@@ -103,7 +102,8 @@ class VerifierSignUpForm(UserCreationForm):
     class Meta(UserCreationForm.Meta):
         model = User
         fields = ('username', 'first_name',
-                  'last_name', 'email', 'is_verifier')
+                  'last_name', 'email',
+                  'business_type', 'business_name')
 
     def save(self, commit=True):
         user = super().save(commit=False)
@@ -111,3 +111,7 @@ class VerifierSignUpForm(UserCreationForm):
         if commit:
             user.save()
         return user
+
+
+class ShareWithForm(forms.Form):
+    share_with = forms.ModelChoiceField(queryset=Businesses.objects.all())

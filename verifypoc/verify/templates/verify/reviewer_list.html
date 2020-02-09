@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <br>
+  <h3>Living items that have been shared</h3>
+  {% if my_event_list %}
+  <ul>
+    {% for object in my_event_list %}
+       {% if object.address %}
+         {{ object.address }} {{ object.start_date }} - {{ object.end_date }}<br>
+      {% endif %}
+    {% endfor %}
+  </ul>
+  {% else %}
+    <p>Nothing has been shared</p>
+  {% endif %}
+   <h3>Work Items that have been shared</h3>
+  {% if work_history_list %}
+  <ul>
+    {% for object in work_history_list %}
+      {% if object.work_place %}
+        {{ object.work_place }} {{ object.start_date }} - {{ object.end_date }}
+      {% endif %}
+    {% endfor %}
+  </ul>
+  {% else %}
+    <p>Nothing has been shared</p>
+  {% endif %}
+{% endblock %}

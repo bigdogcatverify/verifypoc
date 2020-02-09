@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <div class="row align-items-center">
+            <div class="col-8">
+                <h3 class="mb-0">Verify Event </h3>
+            </div>
+        </div>
+    </div>
+    <div class="card-body">
+        <form method="post">
+            {% csrf_token %}
+            <div class="alert alert-warning" role="alert">
+                Are you sure you want to verify <strong>{{ object.address }}</strong> ?
+            </div>
+            <div class="row">
+                <div class="col-4 offset-4">
+                    <input name="living_event" id="living_event" value="{{ object.id }}" type="hidden">
+                    <input type="submit" class="btn btn-block btn-danger" value="Verify">
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

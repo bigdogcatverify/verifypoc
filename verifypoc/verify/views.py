@@ -9,11 +9,11 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import transaction
 from django.contrib import messages
 from django.utils.translation import ugettext_lazy as _
-from django.contrib.auth import login
 
-from .models import LivingItem, WorkItem, User, Profile
-from .forms import EnterLivingForm, EnterWorkForm, UserForm, ProfileForm, RequesterSignUpForm, VerifierSignUpForm
-from .decorators import verifier_required, requester_required
+from .models import LivingItem, WorkItem, User, Profile, Businesses
+from .forms import (EnterLivingForm, EnterWorkForm, UserForm,
+                    ProfileForm, RequesterSignUpForm, VerifierSignUpForm,
+                    ShareWithForm)
 
 
 @login_required
@@ -35,6 +35,40 @@ class EventListView(LoginRequiredMixin, generic.ListView):
 
     def get_queryset(self):
         return LivingItem.objects.all()
+
+
+class ShareWithView(LoginRequiredMixin, generic.ListView):
+    model = LivingItem
+    context_object_name = 'my_event_list'
+    template_name = 'verify/share_list.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(ShareWithView, self).get_context_data(**kwargs)
+        context.update({
+            'work_history_list': WorkItem.objects.all(),
+        })
+
+        return context
+
+    def get_queryset(self):
+        return LivingItem.objects.all()
+
+
+@login_required()
+def share(request, pk):
+    if request.method == 'POST':
+        form = ShareWithForm(request.POST)
+        if form.is_valid():
+            item = LivingItem.objects.get(id=pk)
+            item.shared_with = form.cleaned_data['share_with']
+            item.save()
+        return redirect('hello_world')
+    else:
+        item = LivingItem.objects.get(id=pk)
+        form = ShareWithForm()
+    return render(request, 'verify/share.html',
+                  {'object': item,
+                   'form': form})
 
 
 @login_required
@@ -107,7 +141,7 @@ def update_profile(request):
     else:
         user_form = UserForm(instance=request.user)
         profile_form = ProfileForm(instance=request.user.profile)
-    return render(request, 'verify/profile.html' , {
+    return render(request, 'verify/profile.html', {
         'user_form': user_form,
         'profile_form': profile_form
     })
@@ -134,6 +168,7 @@ class RequesterSignUpView(generic.CreateView):
     model = User
     form_class = RequesterSignUpForm
     template_name = 'registration/signup_form.html'
+    success_url = '/'
 
     def get_context_data(self, **kwargs):
         kwargs['user_type'] = 'requester'
@@ -141,8 +176,6 @@ class RequesterSignUpView(generic.CreateView):
 
     def from_valid(self, form):
         user = form.save()
-        login(self.request, user)
-        return redirect('hello_world')
 
 
 class VerifierSignUpView(generic.CreateView):
@@ -154,12 +187,63 @@ class VerifierSignUpView(generic.CreateView):
         kwargs['user_type'] = 'verifier'
         return super().get_context_data(**kwargs)
 
-    def form(self, form):
+    def form_valid(self, form):
+        business = Businesses()
+        business.business_name = form.cleaned_data['business_name']
+        business.business_type = form.cleaned_data['business_type']
+        business.save()
         user = form.save()
-        login(self.request, user)
         return redirect('hello_world')
 
 
 class StandardSignUpView(generic.TemplateView):
     template_name = 'registration/signup.html'
 
+
+class RequesterListView(LoginRequiredMixin, generic.ListView):
+    model = LivingItem
+    context_object_name = 'my_event_list'
+    template_name = 'verify/requester_list.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(RequesterListView, self).get_context_data(**kwargs)
+        context.update({
+            'work_history_list': WorkItem.objects.filter(is_verified=False,
+                                                         verifier__business_name=self.request.user.business_name),
+        })
+
+        return context
+
+    def get_queryset(self):
+        return LivingItem.objects.filter(is_verified=False,
+                                         verifier__business_name=self.request.user.business_name)
+
+
+@login_required()
+def verify_event(request, pk):
+    if request.method == 'POST':
+        item = LivingItem.objects.get(id=pk)
+        item.is_verified = True
+        item.save()
+        return redirect('hello_world')
+    else:
+        item = LivingItem.objects.get(id=pk)
+    return render(request, 'verify/update.html',
+                  {'object': item})
+
+
+class ReviewListView(LoginRequiredMixin, generic.ListView):
+    model = LivingItem
+    context_object_name = 'my_event_list'
+    template_name = 'verify/reviewer_list.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(ReviewListView, self).get_context_data(**kwargs)
+        context.update({
+            'work_history_list': WorkItem.objects.filter(shared_with__business_name=self.request.user.business_name),
+        })
+
+        return context
+
+    def get_queryset(self):
+        return LivingItem.objects.filter(shared_with__business_name=self.request.user.business_name)
