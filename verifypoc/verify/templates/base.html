@@ -29,6 +29,7 @@
             {% endif %}
             <li><a href="{% url 'profile' %}">Profile</a></li>
             <li><a href="{% url 'update_profile' %}">Edit Profile</a></li>
+            <li><a href="{% url 'actions' %}">History</a></li>
             <li><a href="{% url 'logout'%}?next={{request.path}}">Logout</a></li>
           {% else %}
             <li><a href="{% url 'login'%}?next={{request.path}}">Login</a></li>

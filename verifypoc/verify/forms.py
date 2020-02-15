@@ -4,8 +4,7 @@ from django import forms
 from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.forms import UserCreationForm
-from django.db import transaction
-from .models import User, Profile, Businesses, LivingItem
+from .models import User, Profile, Businesses
 
 
 class EnterLivingForm(forms.Form):
@@ -19,7 +18,7 @@ class EnterLivingForm(forms.Form):
     )
     address = forms.CharField(
         required=True,
-        help_text="Address of where you loved"
+        help_text="Address of where you lived"
     )
     verifier = forms.ModelChoiceField(
         queryset=Businesses.objects.all().order_by('business_name')
@@ -53,9 +52,40 @@ class EnterWorkForm(forms.Form):
         required=True,
         help_text="The place where you worked"
     )
-    verifier = forms.CharField(
+    verifier = forms.ModelChoiceField(
+        queryset=Businesses.objects.all().order_by('business_name')
+    )
+
+    def start_date_correct(self):
+        data = self.cleaned_data['start_date']
+
+        if data > datetime.date.today():
+            raise ValidationError(_('Invalid date - in the future'))
+
+        return data
+
+    def end_date_correct(self, start_date_correct):
+        data = self.cleaned_data['end_date']
+
+        if data < start_date_correct:
+            raise ValidationError(_('Invalid end date - before start date'))
+
+
+class EnterEducationForm(forms.Form):
+    start_date = forms.DateField(
         required=True,
-        help_text="The person to verify this"
+        help_text="Enter the date you started",
+    )
+    end_date = forms.DateField(
+        required=True,
+        help_text="Enter the date you finished"
+    )
+    institution = forms.CharField(
+        required=True,
+        help_text="The place where you studied"
+    )
+    verifier = forms.ModelChoiceField(
+        queryset=Businesses.objects.all().order_by('business_name')
     )
 
     def start_date_correct(self):

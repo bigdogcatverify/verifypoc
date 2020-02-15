@@ -8,7 +8,7 @@
   <ul>
     {% for object in my_event_list %}
        {% if object.address %}
-         {{ object.address }} {{ object.start_date }} - {{ object.end_date }}
+         {{ object.address }} {{ object.start_date }} - {{ object.end_date }} <br>
       {% endif %}
     {% endfor %}
     <li><a href="{% url 'add_event' %}">Add Living Event</a></li><br>
@@ -22,7 +22,7 @@
   <ul>
     {% for object in work_history_list %}
       {% if object.work_place %}
-        {{ object.work_place }} {{ object.start_date }} - {{ object.end_date }}
+        {{ object.work_place }} {{ object.start_date }} - {{ object.end_date }} <br>
       {% endif %}
     {% endfor %}
     <li><a href="{% url 'add_work_event' %}">Add Work Event</a></li><br>
@@ -30,5 +30,19 @@
   {% else %}
     <p>You have not added any Work places</p>
      <li><a href="{% url 'add_work_event' %}">Add Work Event</a></li><br>
+  {% endif %}
+<h3>Education History</h3>
+  {% if education_history_list %}
+  <ul>
+    {% for object in education_history_list %}
+      {% if object.institution %}
+        {{ object.institution }} {{ object.start_date }} - {{ object.end_date }} <br>
+      {% endif %}
+    {% endfor %}
+    <li><a href="{% url 'add_education_event' %}">Add Education Event</a></li><br>
+  </ul>
+  {% else %}
+    <p>You have not added any Education Events</p>
+     <li><a href="{% url 'add_education_event' %}">Add Education Event</a></li><br>
   {% endif %}
 {% endblock %}

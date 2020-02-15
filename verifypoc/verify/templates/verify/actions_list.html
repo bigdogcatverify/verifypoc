@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <br>
+  <h3>Actions History</h3>
+  {% if my_actions_list %}
+  <ul>
+    {% for object in my_actions_list %}
+        {{ object.action_type }} {{ object.date }}<br>
+    {% endfor %}
+  </ul>
+  {% else %}
+    <p>No Actions Yet</p>
+  {% endif %}
+{% endblock %}

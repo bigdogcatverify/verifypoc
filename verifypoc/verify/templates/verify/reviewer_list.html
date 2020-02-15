@@ -7,7 +7,7 @@
   <ul>
     {% for object in my_event_list %}
        {% if object.address %}
-         {{ object.address }} {{ object.start_date }} - {{ object.end_date }}<br>
+        {{ object.added_by }} {{ object.address }} {{ object.start_date }} - {{ object.end_date }} <br>
       {% endif %}
     {% endfor %}
   </ul>
@@ -19,7 +19,19 @@
   <ul>
     {% for object in work_history_list %}
       {% if object.work_place %}
-        {{ object.work_place }} {{ object.start_date }} - {{ object.end_date }}
+       {{ object.added_by }} {{ object.work_place }} {{ object.start_date }} - {{ object.end_date }} <br>
+      {% endif %}
+    {% endfor %}
+  </ul>
+  {% else %}
+    <p>Nothing has been shared</p>
+  {% endif %}
+   <h3>Education Items that have been shared</h3>
+  {% if education_history_list %}
+  <ul>
+    {% for object in education_history_list %}
+      {% if object.institution %}
+       {{ object.added_by }} {{ object.institution }} {{ object.start_date }} - {{ object.end_date }} <br>
       {% endif %}
     {% endfor %}
   </ul>

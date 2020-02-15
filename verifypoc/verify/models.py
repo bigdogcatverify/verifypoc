@@ -3,8 +3,30 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.contrib.auth.models import AbstractUser
 from django.conf import settings
+from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
+from django.contrib.contenttypes.models import ContentType
 
-# TODO add for education event
+
+class Actions(models.Model):
+    ADD_LIVING_EVENT = 'Added Living Event'
+    ADD_WORK_EVENT = 'Added Work Event'
+    ADD_EDUCATION_EVENT = 'Added Education Event'
+    VERIFY_EVENT = 'Verified User Event'
+    SHARE_EVENT = 'Shared Event'
+    ACTION_TYPES = (
+        (ADD_LIVING_EVENT, 'Living Event'),
+        (ADD_WORK_EVENT, 'Work Event'),
+        (ADD_EDUCATION_EVENT, 'Education Event'),
+        (VERIFY_EVENT, 'Verify event'),
+        (SHARE_EVENT, 'Share Event'),
+    )
+
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    action_type = models.CharField(max_length=1, choices=ACTION_TYPES)
+    date = models.DateTimeField(auto_now_add=True)
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
+    object_id = models.PositiveIntegerField(null=True)
+    content_object = GenericForeignKey()
 
 
 class Businesses(models.Model):
@@ -57,10 +79,54 @@ class LivingItem(models.Model):
         blank=True,
         on_delete=models.SET_NULL
     )
+    action = GenericRelation(Actions)
 
     def __str__(self):
         """String representing the living Item"""
         return self.address
+
+
+class EducationItem(models.Model):
+    """Model for Living Item"""
+    start_date = models.DateTimeField(
+        help_text="The start date"
+    )
+    end_date = models.DateTimeField(
+        help_text="The end Date"
+    )
+    institution = models.CharField(
+        help_text="The address of where you lived",
+        max_length=200
+    )
+    verifier = models.ForeignKey(
+        Businesses,
+        related_name='education_verifier',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True
+    )
+    is_verified = models.BooleanField(
+        default=False
+    )
+    added_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        null=True,
+        blank=True,
+        on_delete=models.CASCADE
+    )
+    shared_with = models.ForeignKey(
+        Businesses,
+        related_name='education_shared_with',
+        default=None,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL
+    )
+    action = GenericRelation(Actions)
+
+    def __str__(self):
+        """String representing the living Item"""
+        return self.institution
 
 
 class WorkItem(models.Model):
@@ -99,6 +165,7 @@ class WorkItem(models.Model):
         blank=True,
         on_delete=models.SET_NULL
     )
+    action = GenericRelation(Actions)
 
     def __str__(self):
         """String representing the living Item"""
