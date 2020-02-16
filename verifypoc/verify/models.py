@@ -11,12 +11,14 @@ class Actions(models.Model):
     ADD_LIVING_EVENT = 'Added Living Event'
     ADD_WORK_EVENT = 'Added Work Event'
     ADD_EDUCATION_EVENT = 'Added Education Event'
+    ADD_DOCUMENT_EVENT = 'Added Document'
     VERIFY_EVENT = 'Verified User Event'
     SHARE_EVENT = 'Shared Event'
     ACTION_TYPES = (
         (ADD_LIVING_EVENT, 'Living Event'),
         (ADD_WORK_EVENT, 'Work Event'),
         (ADD_EDUCATION_EVENT, 'Education Event'),
+        (ADD_DOCUMENT_EVENT, 'DOCUMENT Event'),
         (VERIFY_EVENT, 'Verify event'),
         (SHARE_EVENT, 'Share Event'),
     )
@@ -65,6 +67,14 @@ class LivingItem(models.Model):
     is_verified = models.BooleanField(
         default=False
     )
+    verified_by = models.ForeignKey(
+        Businesses,
+        related_name='living_verified_by',
+        default=None,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL
+    )
     added_by = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         null=True,
@@ -108,6 +118,14 @@ class EducationItem(models.Model):
     is_verified = models.BooleanField(
         default=False
     )
+    verified_by = models.ForeignKey(
+        Businesses,
+        related_name='education_verified_by',
+        default=None,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL
+    )
     added_by = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         null=True,
@@ -150,6 +168,14 @@ class WorkItem(models.Model):
     )
     is_verified = models.BooleanField(
         default=False
+    )
+    verified_by = models.ForeignKey(
+        Businesses,
+        related_name='work_verified_by',
+        default=None,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL
     )
     added_by = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -202,3 +228,30 @@ def create_user_profile(sender, instance, created, **kwargs):
 @receiver(post_save, sender=User)
 def save_user_profile(sender, instance, **kwargs):
     instance.profile.save()
+
+
+class Document(models.Model):
+    PASSPORT = 'Passport'
+    DRIVING_LICENCE = 'Driving Licence'
+    GAS_ELECTRIC_BILL = 'Gas or Electric Bill'
+    EDUCATION_EVIDENCE = 'Education Evidence'
+    DOCUMENT_TYPES = (
+        (PASSPORT, 'Passport'),
+        (DRIVING_LICENCE, 'Driving Licence'),
+        (GAS_ELECTRIC_BILL, 'Gas or Electric Bill'),
+        (EDUCATION_EVIDENCE, 'Education Evidence'),
+    )
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    document_type = models.CharField(max_length=30, choices=DOCUMENT_TYPES)
+    date = models.DateTimeField(auto_now_add=True)
+    document = models.FileField(upload_to='documents/%Y/%m/%d/')
+    shared_with = models.ForeignKey(
+        Businesses,
+        related_name='document_shared_with',
+        default=None,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL
+    )
+    action = GenericRelation(Actions)
+

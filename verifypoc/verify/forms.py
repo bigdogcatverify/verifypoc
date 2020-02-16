@@ -4,7 +4,7 @@ from django import forms
 from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.forms import UserCreationForm
-from .models import User, Profile, Businesses
+from .models import User, Profile, Businesses, Document
 
 
 class EnterLivingForm(forms.Form):
@@ -145,3 +145,9 @@ class VerifierSignUpForm(UserCreationForm):
 
 class ShareWithForm(forms.Form):
     share_with = forms.ModelChoiceField(queryset=Businesses.objects.all())
+
+
+class DocumentForm(forms.ModelForm):
+    class Meta:
+        model = Document
+        fields = ('document_type', 'document',)

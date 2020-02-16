@@ -8,7 +8,11 @@
   <ul>
     {% for object in my_event_list %}
        {% if object.address %}
-         {{ object.address }} {{ object.start_date }} - {{ object.end_date }} <br>
+         {{ object.address }} {{ object.start_date }} - {{ object.end_date }}
+          {% if object.is_verified %}
+            <span>&#9989;</span>
+          {% endif %}
+        <br>
       {% endif %}
     {% endfor %}
     <li><a href="{% url 'add_event' %}">Add Living Event</a></li><br>
@@ -22,7 +26,11 @@
   <ul>
     {% for object in work_history_list %}
       {% if object.work_place %}
-        {{ object.work_place }} {{ object.start_date }} - {{ object.end_date }} <br>
+        {{ object.work_place }} {{ object.start_date }} - {{ object.end_date }}
+          {% if object.is_verified %}
+            <span>&#9989;</span>
+          {% endif %}
+        <br>
       {% endif %}
     {% endfor %}
     <li><a href="{% url 'add_work_event' %}">Add Work Event</a></li><br>
@@ -36,7 +44,11 @@
   <ul>
     {% for object in education_history_list %}
       {% if object.institution %}
-        {{ object.institution }} {{ object.start_date }} - {{ object.end_date }} <br>
+        {{ object.institution }} {{ object.start_date }} - {{ object.end_date }}
+          {% if object.is_verified %}
+            <span>&#9989;</span>
+          {% endif %}
+        <br>
       {% endif %}
     {% endfor %}
     <li><a href="{% url 'add_education_event' %}">Add Education Event</a></li><br>

@@ -13,10 +13,10 @@ from django.utils.translation import ugettext_lazy as _
 from .models import (LivingItem, WorkItem,
                      User, Profile,
                      Businesses, Actions,
-                     EducationItem)
+                     EducationItem, Document)
 from .forms import (EnterLivingForm, EnterWorkForm, UserForm,
                     ProfileForm, RequesterSignUpForm, VerifierSignUpForm,
-                    ShareWithForm, EnterEducationForm)
+                    ShareWithForm, EnterEducationForm, DocumentForm)
 
 
 @login_required
@@ -274,6 +274,7 @@ def verify_event(request, pk):
         item = LivingItem.objects.get(id=pk)
         item.is_verified = True
         user = User.objects.get(id=request.user.id)
+        item.verified_by = Businesses.objects.get(business_name=request.user.business_name)
         item.action.create(action_type=Actions.VERIFY_EVENT,
                            user=user)
         item.save()
@@ -293,8 +294,8 @@ class ReviewListView(LoginRequiredMixin, generic.ListView):
         context = super(ReviewListView, self).get_context_data(**kwargs)
         context.update({
             'work_history_list': WorkItem.objects.filter(shared_with__business_name=self.request.user.business_name),
-            'education_history_list': EducationItem.objects.filter(is_verified=False,
-                                                                   verifier__business_name=self.request.user.business_name),
+            'education_history_list': EducationItem.objects.filter(shared_with__business_name=self.request.user.business_name),
+            'document_list': Document.objects.filter(shared_with__business_name=self.request.user.business_name)
         })
 
         return context
@@ -310,3 +311,51 @@ class ActionsListView(LoginRequiredMixin, generic.ListView):
 
     def get_queryset(self):
         return Actions.objects.filter(user=self.request.user.id)
+
+
+def upload(request):
+    if request.method == 'POST':
+        form = DocumentForm(request.POST, request.FILES)
+        if form.is_valid():
+            document = form.save(commit=False)
+            user = User.objects.get(id=request.user.id)
+            document.user = user
+            document.action.create(action_type=Actions.ADD_DOCUMENT_EVENT,
+                                   user=user)
+            document.save()
+            return redirect('hello_world')
+    else:
+        form = DocumentForm()
+
+    return render(request, 'verify/file_upload.html', {
+        'form': form
+    })
+
+
+class DocumentView(LoginRequiredMixin, generic.ListView):
+    model = Document
+    context_object_name = 'document_list'
+    template_name = 'verify/document_share_list.html'
+
+    def get_queryset(self):
+        return Document.objects.filter(user=self.request.user)
+
+
+@login_required()
+def document_share(request, pk):
+    if request.method == 'POST':
+        form = ShareWithForm(request.POST)
+        if form.is_valid():
+            item = Document.objects.get(id=pk)
+            item.shared_with = form.cleaned_data['share_with']
+            user = User.objects.get(id=request.user.id)
+            item.action.create(action_type=Actions.SHARE_EVENT,
+                               user=user)
+            item.save()
+        return redirect('hello_world')
+    else:
+        item = Document.objects.get(id=pk)
+        form = ShareWithForm()
+    return render(request, 'verify/document_share.html',
+                  {'object': item,
+                   'form': form})

@@ -22,6 +22,8 @@
             {% if user.is_requester %}
             <li><a href="{% url 'events' %}">All Events</a></li>
             <li><a href="{% url 'share_with' %}">Share</a></li>
+            <li><a href="{% url 'upload' %}">Upload Documents</a></li>
+            <li><a href="{% url 'doc_share_with' %}">Share Documents</a></li>
             {% endif %}
             {% if user.is_verifier%}
             <li><a href="{% url 'requests' %}">All Requests</a></li>
