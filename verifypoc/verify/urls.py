@@ -1,5 +1,6 @@
 from django.urls import path
 
+
 from . import views
 
 urlpatterns = [
@@ -16,7 +17,10 @@ urlpatterns = [
     path('doc_share_with/', views.DocumentView.as_view(), name='doc_share_with'),
     path('share_with/<int:pk>/share', views.share, name='share'),
     path('doc_share_with/<int:pk>/doc_share', views.document_share, name='doc_share'),
+    path('doc_link_with/<int:pk>/doc_link', views.document_link, name='doc_link'),
     path('review/', views.ReviewListView.as_view(), name='review'),
     path('actions/', views.ActionsListView.as_view(), name='actions'),
     path('upload/', views.upload, name='upload'),
+    path('view_documents/<int:pk>', views.view_document, name='view_document'),
 ]
+

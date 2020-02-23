@@ -7,35 +7,35 @@
   <ul>
     {% for object in my_event_list %}
        {% if object.address %}
-        {{ object.added_by }} {{ object.address }} {{ object.start_date }} - {{ object.end_date }} <a href="{% url 'verify_event' object.id %}" class="btn btn-sm btn-info">Verify</a><br>
+        {{ object.added_by }}:<br> {{ object.address }} {{ object.start_date|date:"Y M d" }} - {{ object.end_date|date:"Y M d" }} <a href="{% url 'verify_event' object.id %}" class="btn btn-sm btn-info">Verify</a><br><br>
       {% endif %}
     {% endfor %}
   </ul>
   {% else %}
-    <p>Nothing to verify</p>
+    <p>Nothing to verify</p><br>
   {% endif %}
    <h3>Work Items to verify</h3>
   {% if work_history_list %}
   <ul>
     {% for object in work_history_list %}
       {% if object.work_place %}
-        {{ object.added_by }} {{ object.work_place }} {{ object.start_date }} - {{ object.end_date }} <a href="{% url 'verify_event' object.id %}" class="btn btn-sm btn-info">Verify</a><br>
+        {{ object.added_by }}:<br> {{ object.work_place }} {{ object.start_date|date:"Y M d" }} - {{ object.end_date|date:"Y M d" }} <a href="{% url 'verify_event' object.id %}" class="btn btn-sm btn-info">Verify</a><br><br>
       {% endif %}
     {% endfor %}
   </ul>
   {% else %}
-    <p>Nothing to verify</p>
+    <p>Nothing to verify</p><br>
   {% endif %}
   <h3>Education Items to verify</h3>
   {% if education_history_list %}
   <ul>
     {% for object in education_history_list %}
       {% if object.institution %}
-        {{ object.added_by }} {{ object.institution }} {{ object.start_date }} - {{ object.end_date }} <a href="{% url 'verify_event' object.id %}" class="btn btn-sm btn-info">Verify</a><br>
+        {{ object.added_by }}:<br> {{ object.institution }} {{ object.start_date|date:"Y M d" }} - {{ object.end_date|date:"Y M d" }} <a href="{% url 'verify_event' object.id %}" class="btn btn-sm btn-info">Verify</a><br><br>
       {% endif %}
     {% endfor %}
   </ul>
   {% else %}
-    <p>Nothing to verify</p>
+    <p>Nothing to verify</p><br>
   {% endif %}
 {% endblock %}

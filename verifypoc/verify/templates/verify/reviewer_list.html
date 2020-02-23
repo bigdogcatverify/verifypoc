@@ -7,62 +7,80 @@
   <ul>
     {% for object in my_event_list %}
        {% if object.address %}
-        {{ object.added_by }} {{ object.address }} {{ object.start_date }} - {{ object.end_date }}
+        {{ object.added_by }}:<br>{{ object.address }} {{ object.start_date|date:"Y M d" }} - {{ object.end_date|date:"Y M d" }}
+        {% if object.linked_docs.document_type %}
+         <br>Support Docs:
+         {{ object.linked_docs.document_type }}
+         <a href="{% url 'view_document' object.linked_docs.id %}" class="btn btn-sm btn-info">view</a>
+         {% endif %}
           {% if object.is_verified %}
+            <br>Verified by: {{ object.verified_by }}
             <span>&#9989;</span>
-            {{ object.verified_by }}
           {% endif %}
-          <br>
+          <br><br>
       {% endif %}
     {% endfor %}
   </ul>
   {% else %}
-    <p>Nothing has been shared</p>
+    <p>Nothing has been shared</p><br>
   {% endif %}
    <h3>Work Items that have been shared</h3>
   {% if work_history_list %}
   <ul>
     {% for object in work_history_list %}
-      {% if object.work_place %}
-       {{ object.added_by }} {{ object.work_place }} {{ object.start_date }} - {{ object.end_date }}
+      {% if object.address %}
+        {{ object.added_by }}:<br>{{ object.address }} {{ object.start_date|date:"Y M d" }} - {{ object.end_date|date:"Y M d" }}
+        {% if object.linked_docs.document_type %}
+         <br>Support Docs:
+         {{ object.linked_docs.document_type }}
+         <a href="{% url 'view_document' object.linked_docs.id %}" class="btn btn-sm btn-info">view</a>
+         {% endif %}
           {% if object.is_verified %}
+           <br>Verified by: {{ object.verified_by }}
             <span>&#9989;</span>
-            {{ object.verified_by }}
           {% endif %}
-          <br>
+          <br><br>
       {% endif %}
     {% endfor %}
   </ul>
   {% else %}
-    <p>Nothing has been shared</p>
+    <p>Nothing has been shared</p><br>
   {% endif %}
    <h3>Education Items that have been shared</h3>
   {% if education_history_list %}
   <ul>
     {% for object in education_history_list %}
-      {% if object.institution %}
-       {{ object.added_by }} {{ object.institution }} {{ object.start_date }} - {{ object.end_date }}
+      {% if object.address %}
+        {{ object.added_by }}:<br>{{ object.address }} {{ object.start_date|date:"Y M d" }} - {{ object.end_date|date:"Y M d" }}
+        {% if object.linked_docs.document_type %}
+         <br>Support Docs:
+         {{ object.linked_docs.document_type }}
+         <a href="{% url 'view_document' object.linked_docs.id %}" class="btn btn-sm btn-info">view</a>
+         {% endif %}
           {% if object.is_verified %}
+           <br>Verified by: {{ object.verified_by }}
             <span>&#9989;</span>
-            {{ object.verified_by }}
           {% endif %}
-          <br>
+          <br><br>
       {% endif %}
     {% endfor %}
   </ul>
   {% else %}
-    <p>Nothing has been shared</p>
+    <p>Nothing has been shared</p><br>
   {% endif %}
   <h3>Documents that have been shared</h3>
   {% if document_list %}
   <ul>
     {% for object in document_list %}
       {% if object.document_type %}
-       {{ object.user }} {{ object.document_type }} {{ object.date }}<br>
+       {{ object.user }}:<br>{{ object.document_type }} {{ object.date }}
+       <a href="{% url 'view_document' object.id %}" class="btn btn-sm btn-info">view</a><br>
+       <br>
       {% endif %}
     {% endfor %}
   </ul>
   {% else %}
-    <p>Nothing has been shared</p>
+    <p>Nothing has been shared</p><br>
   {% endif %}
 {% endblock %}
+

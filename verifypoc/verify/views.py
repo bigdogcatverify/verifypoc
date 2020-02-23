@@ -1,8 +1,8 @@
-import datetime
-
+import os
+from django.conf import settings
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse, Http404
 from django.urls import reverse
 from django.views import generic
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -10,13 +10,13 @@ from django.db import transaction
 from django.contrib import messages
 from django.utils.translation import ugettext_lazy as _
 
-from .models import (LivingItem, WorkItem,
+from .models import (Item,
                      User, Profile,
-                     Businesses, Actions,
-                     EducationItem, Document)
+                     Businesses, Actions, Document)
 from .forms import (EnterLivingForm, EnterWorkForm, UserForm,
                     ProfileForm, RequesterSignUpForm, VerifierSignUpForm,
-                    ShareWithForm, EnterEducationForm, DocumentForm)
+                    ShareWithForm, EnterEducationForm, DocumentForm,
+                    LinkWithForm)
 
 
 @login_required
@@ -25,38 +25,64 @@ def hello_world(request):
 
 
 class EventListView(LoginRequiredMixin, generic.ListView):
-    model = LivingItem
+    model = Item
     context_object_name = 'my_event_list'
+    template_name = 'verify/livingitem_list.html'
 
     def get_context_data(self, **kwargs):
         context = super(EventListView, self).get_context_data(**kwargs)
+        full_list = Item.objects.filter(added_by=self.request.user.id).count()
+        verified_list = Item.objects.filter(added_by=self.request.user.id,
+                                            is_verified=True).count()
+        score = workout_score(full_list, verified_list)
         context.update({
-            'work_history_list': WorkItem.objects.all(),
-            'education_history_list': EducationItem.objects.all(),
+            'work_history_list': Item.objects.filter(event_type='work',
+                                                     added_by=self.request.user.id),
+            'education_history_list': Item.objects.filter(event_type='education',
+                                                          added_by=self.request.user.id),
+            'score': score
         })
 
         return context
 
     def get_queryset(self):
-        return LivingItem.objects.all()
+        return Item.objects.filter(event_type='living',
+                                   added_by=self.request.user.id)
+
+
+def workout_score(number_of_requests, number_verified):
+    """Workout from number of requests their score and status"""
+    score = int(number_verified / number_of_requests * 100)
+    score_map = {'very_good': 'Very Good',
+                 'good': 'Good',
+                 'average': 'Average',
+                 'could_do_better': 'Could do Better'}
+    if score > 80:
+        return score_map['very_good'], score
+    elif score > 60:
+        return score_map['good'], score
+    elif score > 40:
+        return score_map['average'], score
+    else:
+        return score_map['could_do_better'], score
 
 
 class ShareWithView(LoginRequiredMixin, generic.ListView):
-    model = LivingItem
+    model = Item
     context_object_name = 'my_event_list'
     template_name = 'verify/share_list.html'
 
     def get_context_data(self, **kwargs):
         context = super(ShareWithView, self).get_context_data(**kwargs)
         context.update({
-            'work_history_list': WorkItem.objects.all(),
-            'education_history_list': EducationItem.objects.all(),
+            'work_history_list': Item.objects.filter(event_type='work'),
+            'education_history_list': Item.objects.filter(event_type='education'),
         })
 
         return context
 
     def get_queryset(self):
-        return LivingItem.objects.all()
+        return Item.objects.filter(event_type='living')
 
 
 @login_required()
@@ -64,7 +90,7 @@ def share(request, pk):
     if request.method == 'POST':
         form = ShareWithForm(request.POST)
         if form.is_valid():
-            item = LivingItem.objects.get(id=pk)
+            item = Item.objects.get(id=pk)
             item.shared_with = form.cleaned_data['share_with']
             user = User.objects.get(id=request.user.id)
             item.action.create(action_type=Actions.SHARE_EVENT,
@@ -72,7 +98,7 @@ def share(request, pk):
             item.save()
         return redirect('hello_world')
     else:
-        item = LivingItem.objects.get(id=pk)
+        item = Item.objects.get(id=pk)
         form = ShareWithForm()
     return render(request, 'verify/share.html',
                   {'object': item,
@@ -87,13 +113,14 @@ def add_event(request):
         form = EnterLivingForm(request.POST)
 
         if form.is_valid():
-            new_item = LivingItem()
+            new_item = Item()
             new_item.start_date = form.cleaned_data['start_date']
             new_item.end_date = form.cleaned_data['end_date']
             new_item.address = form.cleaned_data['address']
             new_item.verifier = form.cleaned_data['verifier']
             user = User.objects.get(id=request.user.id)
             new_item.added_by = user
+            new_item.event_type = 'living'
             new_item.action.create(action_type=Actions.ADD_LIVING_EVENT,
                                    user=user)
             new_item.save()
@@ -118,13 +145,14 @@ def add_work_event(request):
         form = EnterWorkForm(request.POST)
 
         if form.is_valid():
-            new_item = WorkItem()
+            new_item = Item()
             new_item.start_date = form.cleaned_data['start_date']
             new_item.end_date = form.cleaned_data['end_date']
             new_item.work_place = form.cleaned_data['work_place']
             new_item.verifier = form.cleaned_data['verifier']
             user = User.objects.get(id=request.user.id)
             new_item.added_by = user
+            new_item.event_type = 'work'
             new_item.action.create(action_type=Actions.ADD_WORK_EVENT,
                                    user=user)
             new_item.save()
@@ -149,13 +177,14 @@ def add_education_event(request):
         form = EnterEducationForm(request.POST)
 
         if form.is_valid():
-            new_item = EducationItem()
+            new_item = Item()
             new_item.start_date = form.cleaned_data['start_date']
             new_item.end_date = form.cleaned_data['end_date']
             new_item.institution = form.cleaned_data['institution']
             new_item.verifier = form.cleaned_data['verifier']
             user = User.objects.get(id=request.user.id)
             new_item.added_by = user
+            new_item.event_type = 'education'
             new_item.action.create(action_type=Actions.ADD_EDUCATION_EVENT,
                                    user=user)
             new_item.save()
@@ -248,30 +277,33 @@ class StandardSignUpView(generic.TemplateView):
 
 
 class RequesterListView(LoginRequiredMixin, generic.ListView):
-    model = LivingItem
+    model = Item
     context_object_name = 'my_event_list'
     template_name = 'verify/requester_list.html'
 
     def get_context_data(self, **kwargs):
         context = super(RequesterListView, self).get_context_data(**kwargs)
         context.update({
-            'work_history_list': WorkItem.objects.filter(is_verified=False,
-                                                         verifier__business_name=self.request.user.business_name),
-            'education_history_list': EducationItem.objects.filter(is_verified=False,
-                                                                   verifier__business_name=self.request.user.business_name),
+            'work_history_list': Item.objects.filter(is_verified=False,
+                                                     verifier__business_name=self.request.user.business_name,
+                                                     event_type='work'),
+            'education_history_list': Item.objects.filter(is_verified=False,
+                                                          verifier__business_name=self.request.user.business_name,
+                                                          event_type='education'),
         })
 
         return context
 
     def get_queryset(self):
-        return LivingItem.objects.filter(is_verified=False,
-                                         verifier__business_name=self.request.user.business_name)
+        return Item.objects.filter(is_verified=False,
+                                   verifier__business_name=self.request.user.business_name,
+                                   event_type='living')
 
 
 @login_required()
 def verify_event(request, pk):
     if request.method == 'POST':
-        item = LivingItem.objects.get(id=pk)
+        item = Item.objects.get(id=pk)
         item.is_verified = True
         user = User.objects.get(id=request.user.id)
         item.verified_by = Businesses.objects.get(business_name=request.user.business_name)
@@ -280,28 +312,31 @@ def verify_event(request, pk):
         item.save()
         return redirect('hello_world')
     else:
-        item = LivingItem.objects.get(id=pk)
+        item = Item.objects.get(id=pk)
     return render(request, 'verify/update.html',
                   {'object': item})
 
 
 class ReviewListView(LoginRequiredMixin, generic.ListView):
-    model = LivingItem
+    model = Item
     context_object_name = 'my_event_list'
     template_name = 'verify/reviewer_list.html'
 
     def get_context_data(self, **kwargs):
         context = super(ReviewListView, self).get_context_data(**kwargs)
         context.update({
-            'work_history_list': WorkItem.objects.filter(shared_with__business_name=self.request.user.business_name),
-            'education_history_list': EducationItem.objects.filter(shared_with__business_name=self.request.user.business_name),
+            'work_history_list': Item.objects.filter(shared_with__business_name=self.request.user.business_name,
+                                                     event_type='work'),
+            'education_history_list': Item.objects.filter(shared_with__business_name=self.request.user.business_name,
+                                                                   event_type='education'),
             'document_list': Document.objects.filter(shared_with__business_name=self.request.user.business_name)
         })
 
         return context
 
     def get_queryset(self):
-        return LivingItem.objects.filter(shared_with__business_name=self.request.user.business_name)
+        return Item.objects.filter(shared_with__business_name=self.request.user.business_name,
+                                   event_type='living')
 
 
 class ActionsListView(LoginRequiredMixin, generic.ListView):
@@ -359,3 +394,34 @@ def document_share(request, pk):
     return render(request, 'verify/document_share.html',
                   {'object': item,
                    'form': form})
+
+
+@login_required()
+def document_link(request, pk):
+    if request.method == 'POST':
+        form = LinkWithForm(request.POST, user=User.objects.get(id=request.user.id))
+        if form.is_valid():
+            item = Document.objects.get(id=pk)
+            user = User.objects.get(id=request.user.id)
+            link_item = Item.objects.get(address=form.cleaned_data['link_with'],
+                                         added_by=user)
+            user = User.objects.get(id=request.user.id)
+            link_item.linked_docs = item
+            link_item.save()
+            item.action.create(action_type=Actions.SHARE_EVENT,
+                               user=user)
+        return redirect('hello_world')
+    else:
+        user = User.objects.get(id=request.user.id)
+        item = Document.objects.get(id=pk)
+        form = LinkWithForm(user=user)
+    return render(request, 'verify/document_link.html',
+                  {'object': item,
+                   'form': form})
+
+
+def view_document(request, pk):
+    path = str(Document.objects.get(id=pk).document)
+    file_path = os.path.join(settings.MEDIA_URL, path)
+    context = {'image': file_path}
+    return render(request, "verify/view_images.html", context)

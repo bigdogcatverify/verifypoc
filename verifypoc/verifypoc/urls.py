@@ -16,6 +16,8 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import include, path
 from verify import views
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('', include('verify.urls')),
@@ -25,3 +27,4 @@ urlpatterns = [
     path('accounts/signup/requester/', views.RequesterSignUpView.as_view(), name='requester_signup'),
     path('accounts/signup/verifier/', views.VerifierSignUpView.as_view(), name='verifier_signup'),
 ]
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

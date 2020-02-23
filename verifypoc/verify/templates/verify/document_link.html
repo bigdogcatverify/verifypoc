@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <div class="row align-items-center">
+            <div class="col-8">
+                <h3 class="mb-0">Share Event </h3>
+            </div>
+        </div>
+    </div>
+    <div class="card-body">
+        <form method="post">
+            {% csrf_token %}
+            <div class="btn btn-default btn-lg" role="alert">
+                link with {{ form.link_with }}?
+            </div>
+            <div class="alert alert-warning" role="alert">
+                Are you sure you want to link <strong>{{ object.document_type }}</strong> ?
+            </div>
+            <div class="row">
+                <div class="col-4 offset-4">
+                    <input type="submit" class="btn btn-default btn-lg" value="Link">
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

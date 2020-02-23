@@ -45,8 +45,53 @@ class Businesses(models.Model):
         return self.business_name
 
 
-class LivingItem(models.Model):
+def user_directory_path(instance, filename):
+    return 'user_{0}/{1}/{2}'.format(instance.user,
+                                     instance.document_type,
+                                     filename)
+
+
+class Document(models.Model):
+    PASSPORT = 'Passport'
+    DRIVING_LICENCE = 'Driving Licence'
+    GAS_ELECTRIC_BILL = 'Gas or Electric Bill'
+    EDUCATION_EVIDENCE = 'Education Evidence'
+    DOCUMENT_TYPES = (
+        (PASSPORT, 'Passport'),
+        (DRIVING_LICENCE, 'Driving Licence'),
+        (GAS_ELECTRIC_BILL, 'Gas or Electric Bill'),
+        (EDUCATION_EVIDENCE, 'Education Evidence'),
+    )
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    document_type = models.CharField(max_length=30, choices=DOCUMENT_TYPES)
+    date = models.DateTimeField(auto_now_add=True)
+    document = models.FileField(upload_to=user_directory_path)
+    shared_with = models.ForeignKey(
+        Businesses,
+        related_name='document_shared_with',
+        default=None,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL
+    )
+    action = GenericRelation(Actions)
+
+    def __str__(self):
+        """String representing the living Item"""
+        return self.document
+
+
+class Item(models.Model):
     """Model for Living Item"""
+    LIVING = 'living'
+    WORK = 'work'
+    EDUCATION = 'education'
+    EVENT_TYPES = (
+        (LIVING, 'living'),
+        (WORK, 'work'),
+        (EDUCATION, 'education'),
+    )
+    event_type = models.CharField(max_length=30, choices=EVENT_TYPES)
     start_date = models.DateTimeField(
         help_text="The start date"
     )
@@ -89,113 +134,19 @@ class LivingItem(models.Model):
         blank=True,
         on_delete=models.SET_NULL
     )
+    linked_docs = models.ForeignKey(
+        Document,
+        related_name='living_linked_docs',
+        default=None,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL
+    )
     action = GenericRelation(Actions)
 
     def __str__(self):
         """String representing the living Item"""
         return self.address
-
-
-class EducationItem(models.Model):
-    """Model for Living Item"""
-    start_date = models.DateTimeField(
-        help_text="The start date"
-    )
-    end_date = models.DateTimeField(
-        help_text="The end Date"
-    )
-    institution = models.CharField(
-        help_text="The address of where you lived",
-        max_length=200
-    )
-    verifier = models.ForeignKey(
-        Businesses,
-        related_name='education_verifier',
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True
-    )
-    is_verified = models.BooleanField(
-        default=False
-    )
-    verified_by = models.ForeignKey(
-        Businesses,
-        related_name='education_verified_by',
-        default=None,
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL
-    )
-    added_by = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        null=True,
-        blank=True,
-        on_delete=models.CASCADE
-    )
-    shared_with = models.ForeignKey(
-        Businesses,
-        related_name='education_shared_with',
-        default=None,
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL
-    )
-    action = GenericRelation(Actions)
-
-    def __str__(self):
-        """String representing the living Item"""
-        return self.institution
-
-
-class WorkItem(models.Model):
-    """Model for Living Item"""
-    start_date = models.DateTimeField(
-        help_text="The start date"
-    )
-    end_date = models.DateTimeField(
-        help_text="The end Date"
-    )
-    work_place = models.CharField(
-        help_text="The place where you worked",
-        max_length=200
-    )
-    verifier = models.ForeignKey(
-        Businesses,
-        related_name='work_verifier',
-        null=True,
-        blank=True,
-        on_delete=models.CASCADE
-    )
-    is_verified = models.BooleanField(
-        default=False
-    )
-    verified_by = models.ForeignKey(
-        Businesses,
-        related_name='work_verified_by',
-        default=None,
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL
-    )
-    added_by = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        null=True,
-        blank=True,
-        on_delete=models.CASCADE
-    )
-    shared_with = models.ForeignKey(
-        Businesses,
-        related_name='work_shared_with',
-        default=None,
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL
-    )
-    action = GenericRelation(Actions)
-
-    def __str__(self):
-        """String representing the living Item"""
-        return self.work_place
 
 
 class User(AbstractUser):
@@ -230,28 +181,5 @@ def save_user_profile(sender, instance, **kwargs):
     instance.profile.save()
 
 
-class Document(models.Model):
-    PASSPORT = 'Passport'
-    DRIVING_LICENCE = 'Driving Licence'
-    GAS_ELECTRIC_BILL = 'Gas or Electric Bill'
-    EDUCATION_EVIDENCE = 'Education Evidence'
-    DOCUMENT_TYPES = (
-        (PASSPORT, 'Passport'),
-        (DRIVING_LICENCE, 'Driving Licence'),
-        (GAS_ELECTRIC_BILL, 'Gas or Electric Bill'),
-        (EDUCATION_EVIDENCE, 'Education Evidence'),
-    )
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    document_type = models.CharField(max_length=30, choices=DOCUMENT_TYPES)
-    date = models.DateTimeField(auto_now_add=True)
-    document = models.FileField(upload_to='documents/%Y/%m/%d/')
-    shared_with = models.ForeignKey(
-        Businesses,
-        related_name='document_shared_with',
-        default=None,
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL
-    )
-    action = GenericRelation(Actions)
+
 

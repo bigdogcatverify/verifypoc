@@ -7,7 +7,7 @@
   <ul>
     {% for object in my_event_list %}
        {% if object.address %}
-         {{ object.address }} {{ object.start_date }} - {{ object.end_date }}
+         {{ object.address }} {{ object.start_date|date:"Y M d" }} - {{ object.end_date|date:"Y M d" }}
          <a href="{% url 'share' object.id %}" class="btn btn-sm btn-info">share</a><br>
       {% endif %}
     {% endfor %}
@@ -20,7 +20,7 @@
   <ul>
     {% for object in work_history_list %}
       {% if object.work_place %}
-        {{ object.work_place }} {{ object.start_date }} - {{ object.end_date }}<br>
+        {{ object.work_place }} {{ object.start_date|date:"Y M d" }} - {{ object.end_date|date:"Y M d" }}<br>
         <a href="{% url 'share' object.id %}" class="btn btn-sm btn-info">share</a><br>
       {% endif %}
     {% endfor %}
@@ -33,7 +33,7 @@
   <ul>
     {% for object in education_history_list %}
       {% if object.institution %}
-        {{ object.institution }} {{ object.start_date }} - {{ object.end_date }}
+        {{ object.institution }} {{ object.start_date|date:"Y M d" }} - {{ object.end_date|date:"Y M d" }}
         <a href="{% url 'share' object.id %}" class="btn btn-sm btn-info">share</a><br>
       {% endif %}
     {% endfor %}

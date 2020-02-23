@@ -2,13 +2,15 @@
 
 {% block content %}
   <br>
-  <h3>Documents to share</h3>
+  <h3>Documents to share or link</h3>
   {% if document_list %}
   <ul>
     {% for object in document_list %}
       {% if object.document_type %}
         {{ object.document_type }} {{ object.date }}
-        <a href="{% url 'doc_share' object.id %}" class="btn btn-sm btn-info">share</a><br>
+        <a href="{% url 'doc_share' object.id %}" class="btn btn-sm btn-info">share</a>
+        <a href="{% url 'doc_link' object.id %}" class="btn btn-sm btn-info">link</a><br>
+        <br>
       {% endif %}
     {% endfor %}
   </ul>

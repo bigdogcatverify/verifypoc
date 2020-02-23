@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% if image %}
+    <img src="{{ image }}" alt="{{image}}" style="width:555px;height:540px;">
+{% else %}
+	<p>No image available.</p>
+{% endif %}
+{% endblock %}
