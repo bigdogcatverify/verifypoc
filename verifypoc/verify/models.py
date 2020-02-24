@@ -181,5 +181,24 @@ def save_user_profile(sender, instance, **kwargs):
     instance.profile.save()
 
 
-
-
+class Requests(models.Model):
+    start_date = models.DateTimeField(
+        help_text="The start date"
+    )
+    end_date = models.DateTimeField(
+        help_text="The end Date"
+    )
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        null=True,
+        blank=True,
+        on_delete=models.CASCADE,
+        related_name='requests_user'
+    )
+    requester = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        null=True,
+        blank=True,
+        on_delete=models.CASCADE,
+        related_name='requests_requester'
+    )

@@ -8,7 +8,7 @@
     {% for object in my_event_list %}
        {% if object.address %}
          {{ object.address }} {{ object.start_date|date:"Y M d" }} - {{ object.end_date|date:"Y M d" }}
-         <a href="{% url 'share' object.id %}" class="btn btn-sm btn-info">share</a><br>
+         <a href="{% url 'share' object.id %}" class="btn btn-sm btn-info">share</a><br><br>
       {% endif %}
     {% endfor %}
   </ul>
@@ -19,26 +19,26 @@
   {% if work_history_list %}
   <ul>
     {% for object in work_history_list %}
-      {% if object.work_place %}
-        {{ object.work_place }} {{ object.start_date|date:"Y M d" }} - {{ object.end_date|date:"Y M d" }}<br>
-        <a href="{% url 'share' object.id %}" class="btn btn-sm btn-info">share</a><br>
+      {% if object.address %}
+        {{ object.address }} {{ object.start_date|date:"Y M d" }} - {{ object.end_date|date:"Y M d" }}
+        <a href="{% url 'share' object.id %}" class="btn btn-sm btn-info">share</a><br><br>
       {% endif %}
     {% endfor %}
   </ul>
   {% else %}
-    <p>Nothing to share</p>
+    <p>Nothing to share</p><br>
   {% endif %}
-  <h3>Work Items to share</h3>
+  <h3>Education Items to share</h3>
   {% if work_history_list %}
   <ul>
     {% for object in education_history_list %}
-      {% if object.institution %}
-        {{ object.institution }} {{ object.start_date|date:"Y M d" }} - {{ object.end_date|date:"Y M d" }}
+      {% if object.address %}
+        {{ object.address }} {{ object.start_date|date:"Y M d" }} - {{ object.end_date|date:"Y M d" }}
         <a href="{% url 'share' object.id %}" class="btn btn-sm btn-info">share</a><br>
       {% endif %}
     {% endfor %}
   </ul>
   {% else %}
-    <p>Nothing to share</p>
+    <p>Nothing to share</p><br>
   {% endif %}
 {% endblock %}

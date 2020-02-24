@@ -5,15 +5,17 @@ from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.forms import UserCreationForm
 from .models import (User, Profile, Businesses, Document,
-                     Item)
+                     Item, Requests)
 
 
 class EnterLivingForm(forms.Form):
     start_date = forms.DateField(
+        input_formats=['%d/%m/%Y'],
         required=True,
         help_text="Enter the date you moved in",
     )
     end_date = forms.DateField(
+        input_formats=['%d/%m/%Y'],
         required=True,
         help_text="Enter the date you moved out"
     )
@@ -42,10 +44,12 @@ class EnterLivingForm(forms.Form):
 
 class EnterWorkForm(forms.Form):
     start_date = forms.DateField(
+        input_formats=['%d/%m/%Y'],
         required=True,
         help_text="Enter the date you moved in",
     )
     end_date = forms.DateField(
+        input_formats=['%d/%m/%Y'],
         required=True,
         help_text="Enter the date you moved out"
     )
@@ -74,10 +78,12 @@ class EnterWorkForm(forms.Form):
 
 class EnterEducationForm(forms.Form):
     start_date = forms.DateField(
+        input_formats=['%d/%m/%Y'],
         required=True,
         help_text="Enter the date you started",
     )
     end_date = forms.DateField(
+        input_formats=['%d/%m/%Y'],
         required=True,
         help_text="Enter the date you finished"
     )
@@ -148,6 +154,10 @@ class ShareWithForm(forms.Form):
     share_with = forms.ModelChoiceField(queryset=Businesses.objects.all())
 
 
+class RequestWithForm(forms.Form):
+    share_with = forms.ModelChoiceField(queryset=Businesses.objects.all())
+
+
 class LinkWithForm(forms.Form):
     link_with = forms.ModelChoiceField(queryset=Item.objects.none())
 
@@ -161,3 +171,24 @@ class DocumentForm(forms.ModelForm):
     class Meta:
         model = Document
         fields = ('document_type', 'document',)
+
+
+class RequestForm(forms.ModelForm):
+    start_date = forms.DateField(
+        input_formats=['%d/%m/%Y'],
+        widget=forms.DateTimeInput(attrs={
+            'class': 'form-control datetimepicker-input',
+            'data-target': '#datetimepicker1'
+        }))
+    end_date = forms.DateField(
+        input_formats=['%d/%m/%Y'],
+        widget=forms.DateTimeInput(attrs={
+            'class': 'form-control datetimepicker-input',
+            'data-target': '#datetimepicker2'
+        }))
+    user = forms.ModelChoiceField(queryset=User.objects.filter(is_requester=True))
+
+    class Meta:
+        model = Requests
+        fields = ('user', 'start_date', 'end_date')
+

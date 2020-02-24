@@ -9,14 +9,15 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import transaction
 from django.contrib import messages
 from django.utils.translation import ugettext_lazy as _
+from django.db.models import Q
 
-from .models import (Item,
+from .models import (Item, Requests,
                      User, Profile,
                      Businesses, Actions, Document)
 from .forms import (EnterLivingForm, EnterWorkForm, UserForm,
                     ProfileForm, RequesterSignUpForm, VerifierSignUpForm,
                     ShareWithForm, EnterEducationForm, DocumentForm,
-                    LinkWithForm)
+                    LinkWithForm, RequestForm, RequestWithForm)
 
 
 @login_required
@@ -52,7 +53,10 @@ class EventListView(LoginRequiredMixin, generic.ListView):
 
 def workout_score(number_of_requests, number_verified):
     """Workout from number of requests their score and status"""
-    score = int(number_verified / number_of_requests * 100)
+    if number_of_requests == 0:
+        score = 0
+    else:
+        score = int(number_verified / number_of_requests * 100)
     score_map = {'very_good': 'Very Good',
                  'good': 'Good',
                  'average': 'Average',
@@ -148,7 +152,7 @@ def add_work_event(request):
             new_item = Item()
             new_item.start_date = form.cleaned_data['start_date']
             new_item.end_date = form.cleaned_data['end_date']
-            new_item.work_place = form.cleaned_data['work_place']
+            new_item.address = form.cleaned_data['work_place']
             new_item.verifier = form.cleaned_data['verifier']
             user = User.objects.get(id=request.user.id)
             new_item.added_by = user
@@ -180,7 +184,7 @@ def add_education_event(request):
             new_item = Item()
             new_item.start_date = form.cleaned_data['start_date']
             new_item.end_date = form.cleaned_data['end_date']
-            new_item.institution = form.cleaned_data['institution']
+            new_item.address = form.cleaned_data['institution']
             new_item.verifier = form.cleaned_data['verifier']
             user = User.objects.get(id=request.user.id)
             new_item.added_by = user
@@ -425,3 +429,57 @@ def view_document(request, pk):
     file_path = os.path.join(settings.MEDIA_URL, path)
     context = {'image': file_path}
     return render(request, "verify/view_images.html", context)
+
+
+@login_required()
+def request_info(request):
+    if request.method == 'POST':
+        form = RequestForm(request.POST)
+        if form.is_valid():
+            item = Requests()
+            user = User.objects.get(id=request.user.id)
+            item.user = form.cleaned_data['user']
+            item.start_date = form.cleaned_data['start_date']
+            item.end_date = form.cleaned_data['end_date']
+            item.requester = user
+            item.save()
+        return redirect('hello_world')
+    else:
+        form = RequestForm()
+    return render(request, 'verify/request_info.html',
+                  {'form': form})
+
+
+class RequestListView(LoginRequiredMixin, generic.ListView):
+    model = Requests
+    context_object_name = 'my_request_list'
+    template_name = 'verify/request_list.html'
+
+    def get_queryset(self):
+        return Requests.objects.filter(user=self.request.user.id)
+
+
+@login_required()
+def request_info_list(request, pk):
+    if request.method == 'POST':
+        form = RequestWithForm(request.POST)
+        if form.is_valid():
+            request_item = Requests.objects.get(id=pk)
+            user = request_item.user
+            start_date = request_item.start_date
+            end_date = request_item.end_date
+            Item.objects.filter(Q(start_date__range=(start_date, end_date))|Q(end_date__range=(start_date, end_date)),
+                                added_by=user).update(shared_with=form.cleaned_data['share_with'])
+            Requests.objects.get(id=pk).delete()
+        return redirect('hello_world')
+    else:
+        request_item = Requests.objects.get(id=pk)
+        user = request_item.user
+        start_date = request_item.start_date
+        end_date = request_item.end_date
+        item = Item.objects.filter(Q(start_date__range=(start_date, end_date))|Q(end_date__range=(start_date, end_date)),
+                                   added_by=user)
+        form = RequestWithForm()
+    return render(request, 'verify/request_info_list.html',
+                  {'object': item,
+                   'form': form})
