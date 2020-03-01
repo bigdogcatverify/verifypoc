@@ -27,3 +27,21 @@ python manage.py migrate
 ```
 python manage.py runserver
 ```
+
+## Deploy
+
+### build image
+
+```bash
+docker build -t verify-poc .
+```
+
+### publish image
+```bash
+AWS_ACCOUNT_NO=xxxxxxxxxxxx
+docker tag verify-poc ${AWS_ACCOUNT_NO}.dkr.ecr.eu-west-2.amazonaws.com/verify-poc
+$(aws ecr get-login --no-include-email)
+docker push ${AWS_ACCOUNT_NO}.dkr.ecr.eu-west-2.amazonaws.com/verify-poc
+```
+
+### deploy image

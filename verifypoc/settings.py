@@ -25,7 +25,7 @@ SECRET_KEY = 'i^oym5d92ernt5=_vzm!c1#)iaild0jw_0@2cg$z-eq0v^e4r%'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['bigcatdog.com', 'verify-poc-1589739038.eu-west-2.elb.amazonaws.com']
 
 
 # Application definition
