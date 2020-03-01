@@ -1,0 +1,12 @@
+version: '3'
+services:
+  web:
+    build: .
+    command: bash -c "python manage.py migrate && uwsgi --show-config"
+    ports:
+    - "8000:8000"
+    volumes:
+    - .:/code
+    - logvolume01:/var/log
+volumes:
+  logvolume01: {}
