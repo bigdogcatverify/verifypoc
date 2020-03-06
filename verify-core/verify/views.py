@@ -1,4 +1,5 @@
 import os
+import requests
 from django.conf import settings
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
@@ -311,6 +312,20 @@ def verify_event(request, pk):
         item.is_verified = True
         user = User.objects.get(id=request.user.id)
         item.verified_by = Businesses.objects.get(business_name=request.user.business_name)
+        item.verified_unique_id = request.user.unique_id
+        request_username = str(item.added_by)
+        print(request_username)
+        url = 'http://127.0.0.1:8000/mine_block'
+        verify_data = {'requester': request_username,
+                       'verifier': request.user.unique_id,
+                       'address': item.address,
+                       'isverified': True}
+        try:
+            verify_request = requests.post(url, json=verify_data)
+        except requests.exceptions.HTTPError as err:
+            raise err
+        json_obj = verify_request.json()
+        item.verified_hash = json_obj['nonce']
         item.action.create(action_type=Actions.VERIFY_EVENT,
                            user=user)
         item.save()

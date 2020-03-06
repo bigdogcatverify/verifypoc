@@ -142,6 +142,8 @@ class Item(models.Model):
         blank=True,
         on_delete=models.SET_NULL
     )
+    verified_hash = models.CharField(max_length=30)
+    verified_unique_id = models.CharField(max_length=30)
     action = GenericRelation(Actions)
 
     def __str__(self):
@@ -160,6 +162,7 @@ class User(AbstractUser):
                                      choices=BUSINESS_TYPE,
                                      null=True)
     business_name = models.CharField(max_length=50, null=True)
+    unique_id = models.CharField(max_length=100)
 
 
 class Profile(models.Model):

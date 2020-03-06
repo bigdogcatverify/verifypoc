@@ -18,7 +18,7 @@
   {% if work_history_list %}
   <ul>
     {% for object in work_history_list %}
-      {% if object.work_place %}
+      {% if object.address %}
         {{ object.added_by }}:<br> {{ object.work_place }} {{ object.start_date|date:"Y M d" }} - {{ object.end_date|date:"Y M d" }} <a href="{% url 'verify_event' object.id %}" class="btn btn-sm btn-info">Verify</a><br><br>
       {% endif %}
     {% endfor %}

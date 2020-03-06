@@ -1,4 +1,5 @@
 import datetime
+from uuid import uuid4
 
 from django import forms
 from django.core.exceptions import ValidationError
@@ -130,7 +131,9 @@ class RequesterSignUpForm(UserCreationForm):
 
     def save(self):
         user = super().save(commit=False)
+        unique_id = str(uuid4()).replace('-', '')
         user.is_requester = True
+        user.unique_id = unique_id
         user.save()
         return user
 
@@ -144,7 +147,9 @@ class VerifierSignUpForm(UserCreationForm):
 
     def save(self, commit=True):
         user = super().save(commit=False)
+        unique_id = str(uuid4()).replace('-', '')
         user.is_verifier = True
+        user.unique_id = unique_id
         if commit:
             user.save()
         return user
