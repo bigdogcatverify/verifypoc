@@ -1,25 +1,32 @@
+import os
 import datetime
 import hashlib
 import json
 from django.http import JsonResponse, HttpResponse
 import requests
-from uuid import uuid4
 from urllib.parse import urlparse
 from django.views.decorators.csrf import csrf_exempt
+from django.conf import settings
+
+
+DB_FILE = os.path.join(settings.BASE_DIR, 'block.json')
 
 
 class BlockChain:
 
     def __init__(self):
-        self.chain = []
-        self.transactions = []
-        self.create_block(nonce=1,
-                          previous_hash='0',
-                          is_verified=True,
-                          address='First Block')
-        self.add_transaction(requester='Cool guy',
-                             verifier='Another cool guy')
-        self.nodes = set()
+        try:
+            db_file = open(DB_FILE, "r")
+            block_contents = json.loads(db_file.read())
+            self.chain = block_contents
+        except IOError:
+            print("No File, starting new chain")
+            self.chain = []
+            self.create_block(nonce=1,
+                              previous_hash='0',
+                              is_verified=True,
+                              address='First Block')
+            self.nodes = set()
 
     def create_block(self, nonce, previous_hash,
                      is_verified, address):
@@ -29,10 +36,10 @@ class BlockChain:
                  'previous_hash': previous_hash,
                  'is_verified': is_verified,
                  'address': address,
-                 'transactions': self.transactions
                  }
-        self.transactions = []
         self.chain.append(block)
+        with open(DB_FILE, "w") as db_file:
+            db_file.write(json.dumps(self.chain))
         return block
 
     def get_previous_block(self):
@@ -43,6 +50,7 @@ class BlockChain:
         if is_verified == 1:
             is_verified = 'true'
         string_for_hash = requester + verifier + is_verified + address + str(previous_nonce)
+        print(string_for_hash)
         hash_operation = hashlib.sha256(str(string_for_hash).encode()).hexdigest()
 
         return hash_operation
@@ -93,9 +101,6 @@ class BlockChain:
 
 # Creating our Blockchain
 blockchain = BlockChain()
-node_address = str(uuid4()).replace('-', '')
-root_node = 'e36f0158f0aed45b3bc755dc52ed4560d'
-
 
 # Mining a new block
 # Change to a post and post address is_verified
@@ -113,8 +118,6 @@ def mine_block(request):
         nonce = blockchain.proof_of_work(requester, verifier,
                                          is_verified, address,
                                          previous_nonce)
-        blockchain.add_transaction(requester=requester,
-                                   verifier=verifier)
         block = blockchain.create_block(nonce,
                                         previous_hash,
                                         is_verified,
@@ -124,7 +127,6 @@ def mine_block(request):
                     'timestamp': block['timestamp'],
                     'nonce': block['nonce'],
                     'previous_hash': block['previous_hash'],
-                    'transactions': block['transactions']
                     }
     return JsonResponse(response)
 
@@ -158,21 +160,6 @@ def add_transaction(request):
             return 'Some elements of the transaction are missing', HttpResponse(status=400)
         index = blockchain.add_transaction(received_json['requester'], received_json['verifier'],received_json['time'])
         response = {'message': f'This transaction will be added to Block {index}'}
-    return JsonResponse(response)
-
-
-# Connecting new nodes
-@csrf_exempt
-def connect_node(request):
-    if request.method == 'POST':
-        received_json = json.loads(request.body)
-        nodes = received_json.get('nodes')
-        if nodes is None:
-            return "No node", HttpResponse(status=400)
-        for node in nodes:
-            blockchain.add_node(node)
-        response = {'message': 'All the nodes are now connected. The verify Blockchain now contains the following nodes:',
-                    'total_nodes': list(blockchain.nodes)}
     return JsonResponse(response)
 
 

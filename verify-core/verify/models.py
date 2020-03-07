@@ -142,8 +142,25 @@ class Item(models.Model):
         blank=True,
         on_delete=models.SET_NULL
     )
-    verified_hash = models.CharField(max_length=30)
-    verified_unique_id = models.CharField(max_length=30)
+    verified_hash = models.CharField(
+        max_length=30,
+        null=True,
+        blank=True,
+    )
+    verified_unique_id = models.CharField(
+        max_length=30,
+        null=True,
+        blank=True,
+    )
+    chain_index = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+    verified_datetime = models.CharField(
+        max_length=30,
+        null=True,
+        blank=True,
+    )
     action = GenericRelation(Actions)
 
     def __str__(self):

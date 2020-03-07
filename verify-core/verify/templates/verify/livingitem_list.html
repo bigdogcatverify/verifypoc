@@ -18,7 +18,8 @@
          {% endif %}
           {% if object.is_verified %}
              <br>Verified by: {{ object.verified_by }}
-            <span>&#9989;</span>
+            <span>&#9989;</span><br>
+            <a href="{% url 'validate' object.id %}" class="btn btn-sm btn-info">validate</a><br><br>
           {% endif %}
         <br><br>
       {% endif %}
@@ -42,6 +43,7 @@
           {% if object.is_verified %}
              <br>Verified by: {{ object.verified_by }}
             <span>&#9989;</span>
+            <a href="{% url 'validate' object.id %}" class="btn btn-sm btn-info">validate</a><br><br>
           {% endif %}
         <br><br>
       {% endif %}
@@ -65,6 +67,7 @@
           {% if object.is_verified %}
             <br>Verified by: {{ object.verified_by }}
             <span>&#9989;</span>
+            <a href="{% url 'validate' object.id %}" class="btn btn-sm btn-info">validate</a><br><br>
           {% endif %}
         <br><br>
       {% endif %}

@@ -1,5 +1,6 @@
 import os
 import requests
+import hashlib
 from django.conf import settings
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
@@ -313,10 +314,9 @@ def verify_event(request, pk):
         user = User.objects.get(id=request.user.id)
         item.verified_by = Businesses.objects.get(business_name=request.user.business_name)
         item.verified_unique_id = request.user.unique_id
-        request_username = str(item.added_by)
-        print(request_username)
+        request_username = User.objects.get(username=item.added_by)
         url = 'http://127.0.0.1:8000/mine_block'
-        verify_data = {'requester': request_username,
+        verify_data = {'requester': request_username.unique_id,
                        'verifier': request.user.unique_id,
                        'address': item.address,
                        'isverified': True}
@@ -326,6 +326,8 @@ def verify_event(request, pk):
             raise err
         json_obj = verify_request.json()
         item.verified_hash = json_obj['nonce']
+        item.chain_index = json_obj['index']
+        item.verified_datetime = json_obj['timestamp']
         item.action.create(action_type=Actions.VERIFY_EVENT,
                            user=user)
         item.save()
@@ -333,6 +335,41 @@ def verify_event(request, pk):
     else:
         item = Item.objects.get(id=pk)
     return render(request, 'verify/update.html',
+                  {'object': item})
+
+
+@login_required()
+def validate_event_chain(request, pk):
+    if request.method == 'POST':
+        item = Item.objects.get(id=pk)
+        url = 'http://127.0.0.1:8000/get_chain'
+        try:
+            verify_request = requests.get(url)
+        except requests.exceptions.HTTPError as err:
+            raise err
+        json_obj = verify_request.json()
+        index = item.chain_index
+        chain_block = json_obj['chain'][index - 1]
+        chain_nonce = chain_block['nonce']
+        previous_block = json_obj['chain'][index - 2]
+        previous_nonce = previous_block['nonce']
+        is_verified = item.is_verified
+        if is_verified == 1:
+            is_verified = 'true'
+        address = item.address
+        requester = request.user.unique_id
+        verifier = item.verified_unique_id
+        string_for_hash = requester + verifier + is_verified + address + str(previous_nonce)
+        hash_operation = hashlib.sha256(str(string_for_hash).encode()).hexdigest()
+        try:
+            assert hash_operation == chain_nonce
+            return render(request, 'verify/success.html')
+        except AssertionError as err:
+            raise err
+            return render(request, 'verify/failure.html')
+    else:
+        item = Item.objects.get(id=pk)
+    return render(request, 'verify/validate.html',
                   {'object': item})
 
 

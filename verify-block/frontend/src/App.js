@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import './App.css';
 import Status from './components/status'
 import Send from './components/send'
-import Transactions from './components/transactions'
+import Chain from './components/chain'
 import axios from 'axios';
 
 class App extends Component {
@@ -14,7 +14,7 @@ class App extends Component {
     <div className="App">
     <Status/>
     <Send/>
-    <Transactions/>
+    <Chain/>
     </div>
     );
   }
