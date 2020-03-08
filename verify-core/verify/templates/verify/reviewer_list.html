@@ -7,7 +7,7 @@
   <ul>
     {% for object in my_event_list %}
        {% if object.address %}
-        {{ object.added_by }}:<br>{{ object.address }} {{ object.start_date|date:"Y M d" }} - {{ object.end_date|date:"Y M d" }}
+        <a href="{{ object.added_by }}">{{ object.added_by }}</a><br>{{ object.address }} {{ object.start_date|date:"Y M d" }} - {{ object.end_date|date:"Y M d" }}
         {% if object.linked_docs.document_type %}
          <br>Support Docs:
          {{ object.linked_docs.document_type }}
@@ -29,7 +29,7 @@
   <ul>
     {% for object in work_history_list %}
       {% if object.address %}
-        {{ object.added_by }}:<br>{{ object.address }} {{ object.start_date|date:"Y M d" }} - {{ object.end_date|date:"Y M d" }}
+        <a href="{{ object.added_by }}">{{ object.added_by }}</a><br>{{ object.address }} {{ object.start_date|date:"Y M d" }} - {{ object.end_date|date:"Y M d" }}
         {% if object.linked_docs.document_type %}
          <br>Support Docs:
          {{ object.linked_docs.document_type }}
@@ -51,7 +51,7 @@
   <ul>
     {% for object in education_history_list %}
       {% if object.address %}
-        {{ object.added_by }}:<br>{{ object.address }} {{ object.start_date|date:"Y M d" }} - {{ object.end_date|date:"Y M d" }}
+        <a href="{{ object.added_by }}">{{ object.added_by }}</a><br>{{ object.address }} {{ object.start_date|date:"Y M d" }} - {{ object.end_date|date:"Y M d" }}
         {% if object.linked_docs.document_type %}
          <br>Support Docs:
          {{ object.linked_docs.document_type }}
@@ -73,7 +73,7 @@
   <ul>
     {% for object in document_list %}
       {% if object.document_type %}
-       {{ object.user }}:<br>{{ object.document_type }} {{ object.date }}
+       <a href="{{ object.user }}">{{ object.user }}</a><br>{{ object.document_type }} {{ object.date }}
        <a href="{% url 'view_document' object.id %}" class="btn btn-sm btn-info">view</a><br>
        <br>
       {% endif %}
@@ -83,4 +83,3 @@
     <p>Nothing has been shared</p><br>
   {% endif %}
 {% endblock %}
-

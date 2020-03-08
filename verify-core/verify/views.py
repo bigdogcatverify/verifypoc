@@ -535,3 +535,21 @@ def request_info_list(request, pk):
     return render(request, 'verify/request_info_list.html',
                   {'object': item,
                    'form': form})
+
+
+def verifier_detail_view(request, username):
+    try:
+        user = User.objects.get(username=username)
+    except User.DoesNotExist:
+        raise Http404('User does not exist')
+
+    return render(request, 'verify/verifier_detail.html', context={'user': user})
+
+
+def requester_detail_view(request, username):
+    try:
+        user = User.objects.get(username=username)
+    except User.DoesNotExist:
+        raise Http404('User does not exist')
+
+    return render(request, 'verify/requester_detail.html', context={'user': user})
