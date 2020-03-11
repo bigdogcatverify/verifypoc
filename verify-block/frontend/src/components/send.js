@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 import { Form, Container, Col, Row, Button } from 'react-bootstrap';
 import axios from 'axios';
 
-const postEndpoint = '/mine_block'
-const getEndpoint = '/get_chain'
+const postEndpoint = '/mine_block';
+const getEndpoint = '/get_chain';
 
 class Send extends Component {
   constructor(props){
@@ -14,7 +14,7 @@ class Send extends Component {
       verifier: '',
       isverified: '',
       address: '',
-    }
+    };
     this.handleRequester = this.handleRequester.bind(this);
     this.handleVerifier = this.handleVerifier.bind(this);
     this.handleAddress = this.handleAddress.bind(this);
