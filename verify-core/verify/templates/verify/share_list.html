@@ -1,43 +1,45 @@
 {% extends "base.html" %}
 
 {% block content %}
+<div class="titlebar-container">
+  <div class="titlebar">
+    <h1 class="title">Share List</h1>
+  </div>
+</div>
   <br>
-  <h3>Living items to share</h3>
+  <h3>Living items to share</h3><br>
   {% if my_event_list %}
-  <ul>
     {% for object in my_event_list %}
        {% if object.address %}
-         {{ object.address }} {{ object.start_date|date:"Y M d" }} - {{ object.end_date|date:"Y M d" }}
+         {{ object.address }} <br>
+         {{ object.start_date|date:"Y M d" }} - {{ object.end_date|date:"Y M d" }}<br>
          <a href="{% url 'share' object.id %}" class="btn btn-sm btn-info">share</a><br><br>
       {% endif %}
     {% endfor %}
-  </ul>
   {% else %}
     <p>Nothing to share</p>
   {% endif %}
-   <h3>Work Items to share</h3>
+   <h3>Work Items to share</h3><br>
   {% if work_history_list %}
-  <ul>
     {% for object in work_history_list %}
       {% if object.address %}
-        {{ object.address }} {{ object.start_date|date:"Y M d" }} - {{ object.end_date|date:"Y M d" }}
+        {{ object.address }} <br>
+        {{ object.start_date|date:"Y M d" }} - {{ object.end_date|date:"Y M d" }}<br>
         <a href="{% url 'share' object.id %}" class="btn btn-sm btn-info">share</a><br><br>
       {% endif %}
     {% endfor %}
-  </ul>
   {% else %}
     <p>Nothing to share</p><br>
   {% endif %}
-  <h3>Education Items to share</h3>
+  <h3>Education Items to share</h3><br>
   {% if work_history_list %}
-  <ul>
     {% for object in education_history_list %}
       {% if object.address %}
-        {{ object.address }} {{ object.start_date|date:"Y M d" }} - {{ object.end_date|date:"Y M d" }}
+        {{ object.address }} <br>
+        {{ object.start_date|date:"Y M d" }} - {{ object.end_date|date:"Y M d" }}<br>
         <a href="{% url 'share' object.id %}" class="btn btn-sm btn-info">share</a><br>
       {% endif %}
     {% endfor %}
-  </ul>
   {% else %}
     <p>Nothing to share</p><br>
   {% endif %}

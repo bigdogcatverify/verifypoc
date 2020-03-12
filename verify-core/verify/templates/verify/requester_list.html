@@ -1,6 +1,11 @@
 {% extends "base.html" %}
 
 {% block content %}
+<div class="titlebar-container">
+  <div class="titlebar">
+    <h1 class="title">Items to be Verified</h1>
+  </div>
+</div>
   <br>
   <h3>Living items to Verify</h3>
   {% if my_event_list %}
@@ -19,7 +24,7 @@
   <ul>
     {% for object in work_history_list %}
       {% if object.address %}
-        <a href="{{ object.added_by }}">{{ object.added_by }}</a><br> {{ object.work_place }} {{ object.start_date|date:"Y M d" }} - {{ object.end_date|date:"Y M d" }} <a href="{% url 'verify_event' object.id %}" class="btn btn-sm btn-info">Verify</a><br><br>
+        <a href="{{ object.added_by }}">{{ object.added_by }}</a><br> {{ object.address }} {{ object.start_date|date:"Y M d" }} - {{ object.end_date|date:"Y M d" }} <a href="{% url 'verify_event' object.id %}" class="btn btn-sm btn-info">Verify</a><br><br>
       {% endif %}
     {% endfor %}
   </ul>
@@ -30,8 +35,8 @@
   {% if education_history_list %}
   <ul>
     {% for object in education_history_list %}
-      {% if object.institution %}
-        <a href="{{ object.added_by }}">{{ object.added_by }}</a><br> {{ object.institution }} {{ object.start_date|date:"Y M d" }} - {{ object.end_date|date:"Y M d" }} <a href="{% url 'verify_event' object.id %}" class="btn btn-sm btn-info">Verify</a><br><br>
+      {% if object.address %}
+        <a href="{{ object.added_by }}">{{ object.added_by }}</a><br> {{ object.address }} {{ object.start_date|date:"Y M d" }} - {{ object.end_date|date:"Y M d" }} <a href="{% url 'verify_event' object.id %}" class="btn btn-sm btn-info">Verify</a><br><br>
       {% endif %}
     {% endfor %}
   </ul>

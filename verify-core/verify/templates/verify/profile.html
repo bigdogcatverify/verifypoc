@@ -1,6 +1,10 @@
 {% extends "base.html" %}
 {% block content %}
-  <h1>Edit Profile</h1>
+<div class="titlebar-container">
+  <div class="titlebar">
+    <h1 class="title">Edit Profile</h1>
+  </div>
+</div>
 <form method="post">
   {% csrf_token %}
   {{ user_form.as_p }}

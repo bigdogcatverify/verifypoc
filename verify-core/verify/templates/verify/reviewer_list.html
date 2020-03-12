@@ -1,10 +1,14 @@
 {% extends "base.html" %}
 
 {% block content %}
+<div class="titlebar-container">
+  <div class="titlebar">
+    <h1 class="title">Items Shared With You</h1>
+  </div>
+</div>
   <br>
   <h3>Living items that have been shared</h3>
   {% if my_event_list %}
-  <ul>
     {% for object in my_event_list %}
        {% if object.address %}
         <a href="{{ object.added_by }}">{{ object.added_by }}</a><br>{{ object.address }} {{ object.start_date|date:"Y M d" }} - {{ object.end_date|date:"Y M d" }}
@@ -20,13 +24,11 @@
           <br><br>
       {% endif %}
     {% endfor %}
-  </ul>
   {% else %}
     <p>Nothing has been shared</p><br>
   {% endif %}
    <h3>Work Items that have been shared</h3>
   {% if work_history_list %}
-  <ul>
     {% for object in work_history_list %}
       {% if object.address %}
         <a href="{{ object.added_by }}">{{ object.added_by }}</a><br>{{ object.address }} {{ object.start_date|date:"Y M d" }} - {{ object.end_date|date:"Y M d" }}
@@ -42,13 +44,11 @@
           <br><br>
       {% endif %}
     {% endfor %}
-  </ul>
   {% else %}
     <p>Nothing has been shared</p><br>
   {% endif %}
    <h3>Education Items that have been shared</h3>
   {% if education_history_list %}
-  <ul>
     {% for object in education_history_list %}
       {% if object.address %}
         <a href="{{ object.added_by }}">{{ object.added_by }}</a><br>{{ object.address }} {{ object.start_date|date:"Y M d" }} - {{ object.end_date|date:"Y M d" }}
@@ -64,13 +64,11 @@
           <br><br>
       {% endif %}
     {% endfor %}
-  </ul>
   {% else %}
     <p>Nothing has been shared</p><br>
   {% endif %}
   <h3>Documents that have been shared</h3>
   {% if document_list %}
-  <ul>
     {% for object in document_list %}
       {% if object.document_type %}
        <a href="{{ object.user }}">{{ object.user }}</a><br>{{ object.document_type }} {{ object.date }}
@@ -78,7 +76,6 @@
        <br>
       {% endif %}
     {% endfor %}
-  </ul>
   {% else %}
     <p>Nothing has been shared</p><br>
   {% endif %}

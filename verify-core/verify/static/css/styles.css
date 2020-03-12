@@ -3,3 +3,17 @@
     padding: 0;
     list-style: none;
 }
+
+.titlebar-container {
+    min-height: 106px;
+    padding: 12px 24px;
+    background-color: #eee;
+}
+
+.titlebar-container .titlebar {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+    max-width: 1352px;
+}

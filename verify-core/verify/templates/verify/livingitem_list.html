@@ -1,14 +1,17 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <h1>Event List</h1>
+<div class="titlebar-container">
+  <div class="titlebar">
+    <h1 class="title">Event List</h1>
+  </div>
+</div>
   <br>
   You have had {{ score.1 }}% of your events verified<br>
   Your Score is {{ score.0 }}!!
   <br><br>
-  <h3>Places you have Lived</h3>
+  <h3>Places you have Lived</h3><br>
   {% if my_event_list %}
-  <ul>
     {% for object in my_event_list %}
        {% if object.address %}
          {{ object.address }} {{ object.start_date|date:"Y M d" }} - {{ object.end_date|date:"Y M d" }}
@@ -22,18 +25,15 @@
             <span>&#9989;</span><br>
             <a href="{% url 'validate' object.id %}" class="btn btn-sm btn-info">validate</a><br><br>
           {% endif %}
-        <br><br>
       {% endif %}
     {% endfor %}
     <li><a href="{% url 'add_event' %}">Add Living Event</a></li><br>
-  </ul>
   {% else %}
     <p>You have not added any addresses</p>
      <li><a href="{% url 'add_event' %}">Add Living Event</a></li><br>
   {% endif %}
-   <h3>Places you have Worked</h3>
+   <h3>Places you have Worked</h3><br>
   {% if work_history_list %}
-  <ul>
     {% for object in work_history_list %}
       {% if object.address %}
         {{ object.address }} {{ object.start_date|date:"Y M d" }} - {{ object.end_date|date:"Y M d" }}
@@ -47,18 +47,15 @@
             <span>&#9989;</span><br>
             <a href="{% url 'validate' object.id %}" class="btn btn-sm btn-info">validate</a><br><br>
           {% endif %}
-        <br><br>
       {% endif %}
     {% endfor %}
     <li><a href="{% url 'add_work_event' %}">Add Work Event</a></li><br>
-  </ul>
   {% else %}
     <p>You have not added any Work places</p>
      <li><a href="{% url 'add_work_event' %}">Add Work Event</a></li><br>
   {% endif %}
-<h3>Education History</h3>
+<h3>Education History</h3><br>
   {% if education_history_list %}
-  <ul>
     {% for object in education_history_list %}
       {% if object.address %}
         {{ object.address }} {{ object.start_date|date:"Y M d" }} - {{ object.end_date|date:"Y M d" }}
@@ -72,11 +69,9 @@
             <span>&#9989;</span><br>
             <a href="{% url 'validate' object.id %}" class="btn btn-sm btn-info">validate</a><br><br>
           {% endif %}
-        <br><br>
       {% endif %}
     {% endfor %}
     <li><a href="{% url 'add_education_event' %}">Add Education Event</a></li><br>
-  </ul>
   {% else %}
     <p>You have not added any Education Events</p>
      <li><a href="{% url 'add_education_event' %}">Add Education Event</a></li><br>

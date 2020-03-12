@@ -1,9 +1,13 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <h1>Requests</h1>
-  <br><br>
-  <h3>Requests for Events</h3><br>
+<div class="titlebar-container">
+  <div class="titlebar">
+    <h1 class="title">Requests</h1>
+  </div>
+</div>
+  <br>
+  <h4>Requests for Events</h4><br>
   {% if my_request_list %}
   <ul>
     {% for object in my_request_list %}
@@ -13,6 +17,6 @@
     {% endfor %}
   </ul>
   {% else %}
-    <p>You have not added any requests</p>
+    <p>You have no requests for events at the moment</p>
   {% endif %}
 {% endblock %}

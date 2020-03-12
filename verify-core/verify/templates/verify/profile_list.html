@@ -1,13 +1,17 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <h1>Profile</h1>
+<div class="titlebar-container">
+  <div class="titlebar">
+    <h1 class="title">Profile</h1>
+  </div>
+</div>
   {% if my_profile_list %}
   <ul>
       {% for object in my_profile_list %}
-      <li>First Name: {{ object.first_name }}</li>
-      <li>Last Name: {{ object.last_name }}</li>
-      <li>Email: {{ object.email }}</li>
+      First Name: {{ object.first_name }}<br>
+      Last Name: {{ object.last_name }}<br>
+      Email: {{ object.email }}<br>
       {% endfor %}
       {% for object in profile_list %}
       {% if object.location %}
@@ -15,7 +19,7 @@
       <li>DOB: {{ object.birth_date }}</li>
       {% endif %}
       {% endfor %}
-    <li><a href="{% url 'update_profile' %}">Edit Profile</a></li>
+    <br><li><a href="{% url 'update_profile' %}">Edit Profile</a></li>
   </ul>
   {% endif %}
 {% endblock %}

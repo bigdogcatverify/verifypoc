@@ -1,12 +1,16 @@
 {% extends "base.html" %}
 
 {% block content %}
+<div class="titlebar-container">
+  <div class="titlebar">
+    <h1 class="title">Actions History</h1>
+  </div>
+</div>
   <br>
-  <h3>Actions History</h3>
   {% if my_actions_list %}
   <ul>
     {% for object in my_actions_list %}
-        {{ object.action_type }} {{ object.date }}<br>
+    <li>{{ object.action_type }} {{ object.date }}</li><br>
     {% endfor %}
   </ul>
   {% else %}
