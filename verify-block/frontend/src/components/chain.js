@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Container, Table } from 'react-bootstrap';
 import axios from 'axios';
 
-const endpoint = '/get_chain'
+const endpoint = '/get_chain';
 class Chain extends Component {
   constructor(props){
     super(props);

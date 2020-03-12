@@ -18,3 +18,10 @@ and core on 8001
 ```shell script
 ./cleandb.sh
 ```
+
+## Docker compose
+to run everything with compose:
+```shell script
+docker-compose build
+docker-compose up
+```

@@ -5,7 +5,7 @@ import { Container, Row, Col } from 'react-bootstrap';
 import axios from 'axios';
 
 
-const endpoint = '/get_chain'
+const endpoint = '/get_chain';
 class Status extends Component {
   constructor(props){
     super(props);

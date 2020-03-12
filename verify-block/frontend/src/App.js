@@ -3,7 +3,6 @@ import './App.css';
 import Status from './components/status'
 import Send from './components/send'
 import Chain from './components/chain'
-import axios from 'axios';
 
 class App extends Component {
   constructor(props){
