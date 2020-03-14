@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Container, Table } from 'react-bootstrap';
 import axios from 'axios';
 
-const endpoint = '/get_chain';
+const endpoint = '/block/api/get_chain';
 class Chain extends Component {
   constructor(props){
     super(props);
@@ -30,7 +30,7 @@ class Chain extends Component {
     </tr>
   </thead>
   <tbody>
-  { this.state.chain.slice(0).reverse().map( c =>
+  { this.state.chain.slice(0) && this.state.chain.slice(0).reverse().map( c =>
     <tr key={c}>
       <td><b style={{color: '#007bff'}}>{c.index}</b></td>
       <td><b style={{color: '#007bff'}}>{c.timestamp}</b></td>

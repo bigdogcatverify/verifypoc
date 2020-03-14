@@ -25,8 +25,7 @@ SECRET_KEY = '$%ybx41zieojbycjd2g(k-(w%(bikpp$x&0vp*d#hs=og*0^po'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
-
+ALLOWED_HOSTS = ['verify-block', 'block', 'localhost']
 
 # Application definition
 
