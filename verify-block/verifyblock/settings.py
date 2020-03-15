@@ -9,10 +9,13 @@ https://docs.djangoproject.com/en/2.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/2.2/ref/settings/
 """
-
+from __future__ import print_function
 import os
 import requests
 import sys
+
+def eprint(*args, **kwargs):
+    print(*args, file=sys.stderr, **kwargs)
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -30,21 +33,12 @@ DEBUG = True
 ALLOWED_HOSTS = ['verify-block', 'block', 'localhost']
 
 
-IS_A_GOOGLE_CLOUD_RUNTIME = os.getenv('K_SERVICE')
+HOSTNAME = os.getenv('HOSTNAME')
 
-print >> sys.stderr, "Checking if we are running in a google platform"
-print >> sys.stderr, IS_A_GOOGLE_CLOUD_RUNTIME
+if HOSTNAME:
+    ALLOWED_HOSTS.append(HOSTNAME)
 
-
-if IS_A_GOOGLE_CLOUD_RUNTIME:
-    hostname_response = requests.get('http://metadata.google.internal/computeMetadata/v1/instance/hostname')
-    print >> sys.stderr, hostname_response
-    if hostname_response:
-        hostname = hostname_response.json()
-        print >> sys.stderr, hostname
-        ALLOWED_HOSTS.append(hostname)
-
-print >> sys.stderr, ALLOWED_HOSTS
+eprint(ALLOWED_HOSTS)
 
 # Application definition
 
