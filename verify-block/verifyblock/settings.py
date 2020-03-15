@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 """
 
 import os
+import requests
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -26,6 +27,16 @@ SECRET_KEY = '$%ybx41zieojbycjd2g(k-(w%(bikpp$x&0vp*d#hs=og*0^po'
 DEBUG = True
 
 ALLOWED_HOSTS = ['verify-block', 'block', 'localhost']
+
+
+IS_A_GOOGLE_CLOUD_RUNTIME = os.getenv('K_SERVICE')
+
+if IS_A_GOOGLE_CLOUD_RUNTIME:
+    hostname_response = requests.get('http://metadata.google.internal/computeMetadata/v1/instance/hostname')
+    if hostname_response:
+        hostname = hostname_response.json()
+        ALLOWED_HOSTS.append(hostname)
+
 
 # Application definition
 
