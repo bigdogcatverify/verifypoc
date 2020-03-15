@@ -19,6 +19,7 @@ from django.conf.urls import url
 from verifyblockapp import views
 
 urlpatterns = [
+    path('', views.hello_world, name='hello_world'),
     path('admin/', admin.site.urls),
     url('^get_chain$', views.get_chain, name="get_chain"),
     url('^mine_block$', views.mine_block, name="mine_block"),

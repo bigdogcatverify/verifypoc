@@ -26,20 +26,12 @@ SECRET_KEY = 'i^oym5d92ernt5=_vzm!c1#)iaild0jw_0@2cg$z-eq0v^e4r%'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['verify-core', 'localhost', '127.0.0.1']
 
-METADATA_URI = os.getenv('ECS_CONTAINER_METADATA_URI')
+HOSTNAME = os.getenv('HOSTNAME')
 
-if METADATA_URI:
-    metadata = requests.get(METADATA_URI)
-    if metadata:
-        container_metadata = metadata.json()
-        ALLOWED_HOSTS.append(container_metadata['Networks'][0]['IPv4Addresses'][0])
-        ALLOWED_HOSTS.append('bigcatdog.com')
-        ALLOWED_HOSTS.append('verify-core')
-        ALLOWED_HOSTS.append('core')
-        ALLOWED_HOSTS.append('verify-poc-1589739038.eu-west-2.elb.amazonaws.com')
-        ALLOWED_HOSTS.append('localhost')
+if HOSTNAME:
+    ALLOWED_HOSTS.append(HOSTNAME)
 
 # Application definition
 

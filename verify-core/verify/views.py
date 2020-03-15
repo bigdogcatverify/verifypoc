@@ -21,6 +21,7 @@ from .forms import (EnterLivingForm, EnterWorkForm, UserForm,
                     ShareWithForm, EnterEducationForm, DocumentForm,
                     LinkWithForm, RequestForm, RequestWithForm)
 
+block_endpoint = os.getenv('BLOCK_ENDPOINT', 'http://127.0.0.1:8000')
 
 @login_required
 def hello_world(request):
@@ -315,7 +316,7 @@ def verify_event(request, pk):
         item.verified_by = Businesses.objects.get(business_name=request.user.business_name)
         item.verified_unique_id = request.user.unique_id
         request_username = User.objects.get(username=item.added_by)
-        url = 'http://127.0.0.1:8000/mine_block'
+        url = '%s/mine_block' % block_endpoint
         verify_data = {'requester': request_username.unique_id,
                        'verifier': request.user.unique_id,
                        'address': item.address,
@@ -342,7 +343,7 @@ def verify_event(request, pk):
 def validate_event_chain(request, pk):
     if request.method == 'POST':
         item = Item.objects.get(id=pk)
-        url = 'http://127.0.0.1:8000/get_chain'
+        url = '%s/get_chain' % block_endpoint
         try:
             verify_request = requests.get(url)
         except requests.exceptions.HTTPError as err:

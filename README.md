@@ -25,3 +25,6 @@ to run everything with compose:
 docker-compose build
 docker-compose up
 ```
+
+## Deployment
+See [infra](infra/README.md) readme

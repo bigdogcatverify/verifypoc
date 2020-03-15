@@ -9,8 +9,13 @@ https://docs.djangoproject.com/en/2.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/2.2/ref/settings/
 """
-
+from __future__ import print_function
 import os
+import requests
+import sys
+
+def eprint(*args, **kwargs):
+    print(*args, file=sys.stderr, **kwargs)
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -25,7 +30,22 @@ SECRET_KEY = '$%ybx41zieojbycjd2g(k-(w%(bikpp$x&0vp*d#hs=og*0^po'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['verify-block', 'block', 'localhost']
+ALLOWED_HOSTS = ['verify-block', 'block', 'localhost', '127.0.0.1']
+
+
+IS_A_GOOGLE_CLOUD_RUNTIME = os.getenv('K_SERVICE')
+HOSTNAME = os.getenv('HOSTNAME')
+
+if HOSTNAME:
+    ALLOWED_HOSTS.append(HOSTNAME)
+
+if IS_A_GOOGLE_CLOUD_RUNTIME:
+    metadata_server = "http://metadata.google.internal/computeMetadata/v1/instance/"
+    metadata_flavor = {'Metadata-Flavor' : 'Google'}
+    gce_name = requests.get(metadata_server + 'hostname', headers = metadata_flavor)
+    eprint(gce_name)
+
+eprint(ALLOWED_HOSTS)
 
 # Application definition
 

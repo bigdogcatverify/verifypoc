@@ -174,3 +174,6 @@ def replace_chain(request): #New
             response = {'message': 'All good. The chain is the largest one.',
                         'actual_chain': blockchain.chain}
     return JsonResponse(response)
+
+def hello_world(request):
+    return JsonResponse({'status': 'OK'})
