@@ -12,6 +12,9 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 
 import os
 import requests
+import logging
+
+logger = logging.getLogger(__name__)
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -30,13 +33,19 @@ ALLOWED_HOSTS = ['verify-block', 'block', 'localhost']
 
 
 IS_A_GOOGLE_CLOUD_RUNTIME = os.getenv('K_SERVICE')
+logger.info('Checking if we are running in a google platform')
+logger.info(IS_A_GOOGLE_CLOUD_RUNTIME)
+
 
 if IS_A_GOOGLE_CLOUD_RUNTIME:
     hostname_response = requests.get('http://metadata.google.internal/computeMetadata/v1/instance/hostname')
+    logger.info(hostname_response)
     if hostname_response:
         hostname = hostname_response.json()
+        logger.info(hostname)
         ALLOWED_HOSTS.append(hostname)
 
+logger.info(ALLOWED_HOSTS)
 
 # Application definition
 
