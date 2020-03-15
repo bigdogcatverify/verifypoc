@@ -37,6 +37,10 @@ HOSTNAME = os.getenv('HOSTNAME')
 
 if HOSTNAME:
     ALLOWED_HOSTS.append(HOSTNAME)
+    metadata_server = "http://metadata.google.internal/computeMetadata/v1/instance/"
+    metadata_flavor = {'Metadata-Flavor' : 'Google'}
+    gce_name = requests.get(metadata_server + 'hostname', headers = metadata_flavor)
+    eprint(gce_name)
 
 eprint(ALLOWED_HOSTS)
 
