@@ -24,40 +24,83 @@
   {% load static %}
   <link rel="stylesheet" href="{% static 'css/styles.css' %}">
 </head>
-<body>
+<body style="background-color:#f5f5f5;">
   <div class="container-fluid">
-    <div class="row">
-      <div class="col-sm-2">
+    <header class="header-1">
+      <strong class="brand-format">Verify</strong>
+      {% if user.is_authenticated %}
+      <strong class="username-format">User: {{ user.get_username }}</strong>
+      {% endif %}
+    </header>
+    <div class="row-format">
+      <div class="side-format">
       {% block sidebar %}
         <ul class="sidebar-nav">
           {% if user.is_authenticated %}
-            <li>User: {{ user.get_username }}</li>
-            <li><a href="{% url 'hello_world' %}">Home</a></li>
+          <h2 class="category-style">Options</h2>
+            <li class="category-list">
+              <a  class="category-item" href="{% url 'hello_world' %}">Home</a>
+            </li>
             {% if user.is_requester %}
-            <li><a href="{% url 'events' %}">All Events</a></li>
-            <li><a href="{% url 'share_with' %}">Share</a></li>
-            <li><a href="{% url 'upload' %}">Upload Documents</a></li>
-            <li><a href="{% url 'doc_share_with' %}">Share or Link Documents</a></li>
-            <li><a href="{% url 'request_list' %}">Requests</a></li>
+            <li class="category-list">
+              <a class="category-item" href="{% url 'events' %}">All Events</a>
+            </li>
+             <li class="category-list">
+              <a class="category-item" href="{% url 'share_with' %}">Share</a>
+            </li>
+             <li class="category-list">
+              <a class="category-item" href="{% url 'upload' %}">Upload Documents</a>
+            </li>
+             <li class="category-list">
+              <a class="category-item" href="{% url 'doc_share_with' %}">Share or Link Documents</a>
+            </li>
+             <li class="category-list">
+              <a class="category-item" href="{% url 'request_list' %}">Requests</a>
+            </li>
             {% endif %}
             {% if user.is_verifier%}
-            <li><a href="{% url 'requests' %}">All Requests</a></li>
-            <li><a href="{% url 'review' %}">Shared Events</a></li>
-            <li><a href="{% url 'request_info' %}">Request Events</a></li>
+             <li class="category-list">
+              <a class="category-item" href="{% url 'requests' %}">All Requests</a>
+            </li>
+            <li class="category-list">
+              <a class="category-item" href="{% url 'review' %}">Shared Events</a>
+            </li>
+             <li class="category-list">
+              <a class="category-item" href="{% url 'request_info' %}">Request Events</a>
+            </li>
             {% endif %}
-            <li><a href="{% url 'profile' %}">Profile</a></li>
-            <li><a href="{% url 'update_profile' %}">Edit Profile</a></li>
-            <li><a href="{% url 'actions' %}">History</a></li>
-            <li><a href="{% url 'logout'%}?next={{request.path}}">Logout</a></li>
+             <li class="category-list">
+              <a class="category-item" href="{% url 'profile' %}">Profile</a>
+            </li>
+             <li class="category-list">
+              <a class="category-item" href="{% url 'update_profile' %}">Edit Profile</a>
+            </li>
+             <li class="category-list">
+              <a class="category-item" href="{% url 'actions' %}">History</a>
+            </li>
+             <li class="category-list">
+              <a class="category-item" href="{% url 'logout'%}?next={{request.path}}">Logout</a>
+            </li>
           {% else %}
-            <li><a href="{% url 'login'%}?next={{request.path}}">Login</a></li>
-            <li><a href="{% url 'signup'%}?next={{request.path}}">Signup</a></li>
+             <li class="category-list">
+              <a class="category-item" href="{% url 'login'%}?next={{request.path}}">Login</a>
+            </li>
+             <li class="category-list">
+              <a class="category-item" href="{% url 'signup'%}?next={{request.path}}">Signup</a>
+            </li>
           {% endif %}
         </ul>
       {% endblock %}
       </div>
-      <div class="col-sm-10 ">{% block content %}{% endblock %}</div>
+      <div class="main-format">{% block content %}{% endblock %}</div>
     </div>
+    <footer class="footer-1">
+      <div class="footer-border">
+        <li class="footer-link">
+           <strong>About Verify</strong>
+        </li>
+      </div>
+    </footer>
   </div>
 </body>
 </html>
