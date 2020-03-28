@@ -1,11 +1,23 @@
 steps:
-# build the container image
+# build the verify-block image
 - name: 'gcr.io/cloud-builders/docker'
   args: ['build', '-t', 'gcr.io/$PROJECT_ID/verify-block:$COMMIT_SHA', 'verify-block']
-# push the container image to Container Registry
+# push the verify-block image to Container Registry
 - name: 'gcr.io/cloud-builders/docker'
   args: ['push', 'gcr.io/$PROJECT_ID/verify-block:$COMMIT_SHA']
-# Deploy container image to Cloud Run
+# build the verify-core image
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['build', '-t', 'gcr.io/$PROJECT_ID/verify-core:$COMMIT_SHA', 'verify-core']
+# push the verify-core image to Container Registry
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['push', 'gcr.io/$PROJECT_ID/verify-core:$COMMIT_SHA']
+# build the verify-block-frontend image
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['build', '-t', 'gcr.io/$PROJECT_ID/verify-block-frontend:$COMMIT_SHA', 'verify-block']
+# push the verify-block-frontend image to Container Registry
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['push', 'gcr.io/$PROJECT_ID/verify-block-frontend:$COMMIT_SHA']
+# Deploy verify-block image to Cloud Run
 - name: 'gcr.io/cloud-builders/gcloud'
   args:
   - 'run'
@@ -17,5 +29,31 @@ steps:
   - 'europe-west1'
   - '--platform'
   - 'managed'
+# Deploy verify-core image to Cloud Run
+- name: 'gcr.io/cloud-builders/gcloud'
+  args:
+  - 'run'
+  - 'deploy'
+  - 'verify-block'
+  - '--image'
+  - 'gcr.io/$PROJECT_ID/verify-core:$COMMIT_SHA'
+  - '--region'
+  - 'europe-west1'
+  - '--platform'
+  - 'managed'
+# Deploy verify-block-frontend image to Cloud Run
+- name: 'gcr.io/cloud-builders/gcloud'
+  args:
+  - 'run'
+  - 'deploy'
+  - 'verify-block'
+  - '--image'
+  - 'gcr.io/$PROJECT_ID/verify-block-frontend:$COMMIT_SHA'
+  - '--region'
+  - 'europe-west1'
+  - '--platform'
+  - 'managed'
 images:
 - 'gcr.io/$PROJECT_ID/verify-block:$COMMIT_SHA'
+- 'gcr.io/$PROJECT_ID/verify-core:$COMMIT_SHA'
+- 'gcr.io/$PROJECT_ID/verify-block-frontend:$COMMIT_SHA'

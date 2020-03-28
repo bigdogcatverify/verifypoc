@@ -30,13 +30,16 @@ SECRET_KEY = '$%ybx41zieojbycjd2g(k-(w%(bikpp$x&0vp*d#hs=og*0^po'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['verify-block', 'block', 'localhost']
+ALLOWED_HOSTS = ['verify-block', 'block', 'localhost', '127.0.0.1']
 
 
+IS_A_GOOGLE_CLOUD_RUNTIME = os.getenv('K_SERVICE')
 HOSTNAME = os.getenv('HOSTNAME')
 
 if HOSTNAME:
     ALLOWED_HOSTS.append(HOSTNAME)
+
+if IS_A_GOOGLE_CLOUD_RUNTIME:
     metadata_server = "http://metadata.google.internal/computeMetadata/v1/instance/"
     metadata_flavor = {'Metadata-Flavor' : 'Google'}
     gce_name = requests.get(metadata_server + 'hostname', headers = metadata_flavor)

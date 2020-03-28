@@ -23,6 +23,11 @@ python manage.py makemigrations verify
 python manage.py migrate
 ```
 
+#### To load test data
+```shell script
+python manage.py loaddata homer
+```
+
 ### To Run
 ```
 python manage.py runserver

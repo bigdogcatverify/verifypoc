@@ -14,6 +14,7 @@ RUN set -ex \
     libpcre3 \
     mime-support \
     postgresql-client \
+    gettext-base \
     " \
     && seq 1 8 | xargs -I{} mkdir -p /usr/share/man/man{} \
     && apt-get update && apt-get install -y --no-install-recommends $RUN_DEPS \
@@ -57,7 +58,7 @@ RUN python manage.py collectstatic --noinput
 ENV UWSGI_WSGI_FILE=verifypoc/wsgi.py
 
 # Base uWSGI configuration (you shouldn't need to change these):
-ENV UWSGI_HTTP=:8000 UWSGI_MASTER=1 UWSGI_HTTP_AUTO_CHUNKED=1 UWSGI_HTTP_KEEPALIVE=1 UWSGI_LAZY_APPS=1 UWSGI_WSGI_ENV_BEHAVIOR=holy
+ENV UWSGI_MASTER=1 UWSGI_HTTP_AUTO_CHUNKED=1 UWSGI_HTTP_KEEPALIVE=1 UWSGI_LAZY_APPS=1 UWSGI_WSGI_ENV_BEHAVIOR=holy
 
 # Number of uWSGI workers and threads per worker (customize as needed):
 ENV UWSGI_WORKERS=2 UWSGI_THREADS=4
@@ -74,9 +75,17 @@ ENV UWSGI_STATIC_MAP="/static/=/code/static/" UWSGI_STATIC_EXPIRES_URI="/static/
 # setup db
 RUN python manage.py makemigrations verify
 RUN python manage.py migrate
+# create test data
+RUN python manage.py loaddata homer
+
+# Default env vars for accessing locally hosted APIs with compose
+ENV BLOCK_ENDPOINT http://block:8000
 
 # Uncomment after creating your docker-entrypoint.sh
 # ENTRYPOINT ["/code/docker-entrypoint.sh"]
 
 # Start uWSGI
-CMD ["uwsgi", "--show-config"]
+ENV PORT=8000
+COPY start.sh start.sh.template
+
+CMD envsubst < start.sh.template > start.sh && chmod +x start.sh && sh start.sh
