@@ -3,13 +3,14 @@ services:
   core:
     build: ./verify-core
     ports:
-    - "8001:8000"
+    - "8001:8001"
+    environment:
+      - PORT=8001
     volumes:
     - .:/code/verify-core
     - logvolume01:/var/log
     links:
     - block
-    command: sh -c "python manage.py loaddata homer && uwsgi --show-config"
   block:
     build: ./verify-block
     ports:
