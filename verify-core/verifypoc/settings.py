@@ -36,7 +36,10 @@ if METADATA_URI:
         container_metadata = metadata.json()
         ALLOWED_HOSTS.append(container_metadata['Networks'][0]['IPv4Addresses'][0])
         ALLOWED_HOSTS.append('bigcatdog.com')
+        ALLOWED_HOSTS.append('verify-core')
+        ALLOWED_HOSTS.append('core')
         ALLOWED_HOSTS.append('verify-poc-1589739038.eu-west-2.elb.amazonaws.com')
+        ALLOWED_HOSTS.append('localhost')
 
 # Application definition
 

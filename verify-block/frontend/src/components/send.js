@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 import { Form, Container, Col, Row, Button } from 'react-bootstrap';
 import axios from 'axios';
 
-const postEndpoint = '/mine_block';
-const getEndpoint = '/get_chain';
+const postEndpoint = '/block/api/mine_block';
+const getEndpoint = '/block/api/get_chain';
 
 class Send extends Component {
   constructor(props){

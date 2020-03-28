@@ -5,7 +5,7 @@ import { Container, Row, Col } from 'react-bootstrap';
 import axios from 'axios';
 
 
-const endpoint = '/get_chain';
+const endpoint = '/block/api/get_chain';
 class Status extends Component {
   constructor(props){
     super(props);
@@ -27,7 +27,7 @@ class Status extends Component {
     <br/>
     <Row>
     <Col sm="6">
-  <h5> <div><i className="fa fa-cubes"></i></div> No. of Blocks Mined </h5> <hr/>
+  <h5> <div><i className="fa fa-cubes"/></div> No. of Blocks Mined </h5> <hr/>
  <h5 style={{color: '#007bff'}}>#<b>{this.state.length} </b></h5>
     </Col>
     </Row>

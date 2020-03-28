@@ -5,7 +5,7 @@ services:
     ports:
     - "8001:8000"
     volumes:
-    - .:/code
+    - .:/code/verify-core
     - logvolume01:/var/log
     links:
     - block
@@ -14,15 +14,15 @@ services:
     ports:
     - "8000:8000"
     volumes:
-    - .:/code
+    - .:/code/verify-block
     - logvolume01:/var/log
   block-frontend:
     build: ./verify-block/frontend
     ports:
-    - "3000:3000"
+    - "8081:80"
     volumes:
-    - .:/code
-    - logvolume01:/var/log
+    - .:/code/verify-block/frontend
+    - logvolume01:/var/log/nginx
     links:
     - block
 volumes:
