@@ -132,3 +132,7 @@ dmypy.json
 .idea
 
 **/block.json
+
+**/media
+
+**/migrations
