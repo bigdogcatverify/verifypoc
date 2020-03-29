@@ -34,7 +34,7 @@ steps:
   args:
   - 'run'
   - 'deploy'
-  - 'verify-block'
+  - 'verify-core'
   - '--image'
   - 'gcr.io/$PROJECT_ID/verify-core:$COMMIT_SHA'
   - '--region'
@@ -46,7 +46,7 @@ steps:
   args:
   - 'run'
   - 'deploy'
-  - 'verify-block'
+  - 'verify-block-frontend'
   - '--image'
   - 'gcr.io/$PROJECT_ID/verify-block-frontend:$COMMIT_SHA'
   - '--region'
