@@ -29,7 +29,7 @@
     <header class="header-1">
       <strong class="brand-format">Verify</strong>
       {% if user.is_authenticated %}
-      <strong class="username-format">User: {{ user.get_username }}</strong>
+      <strong class="username-format">User: <span id="username">{{ user.get_username }}</span></strong>
       {% endif %}
     </header>
     <div class="row-format">

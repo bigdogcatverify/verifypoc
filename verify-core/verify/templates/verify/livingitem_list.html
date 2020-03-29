@@ -12,22 +12,26 @@
   <br><br>
   <h3>Places you have Lived</h3><br>
   {% if my_event_list %}
+    <ul id="address-history">
     {% for object in my_event_list %}
-       {% if object.address %}
-         {{ object.address }} {{ object.start_date|date:"Y M d" }} - {{ object.end_date|date:"Y M d" }}
-         {% if object.linked_docs.document_type %}
-         <br>Support Docs:
-         {{ object.linked_docs.document_type }}
+      <li>
+      {% if object.address %}
+        {{ object.address }} {{ object.start_date|date:"Y M d" }} - {{ object.end_date|date:"Y M d" }}
+        {% if object.linked_docs.document_type %}
+        <br>Support Docs:
+        {{ object.linked_docs.document_type }}
+        {% endif %}
+         {% if object.is_verified %}
+            <br>Verified by:
+                  <a href="{{ object.verified_by }}"> {{ object.verified_by }}</a>
+           <span>&#9989;</span><br>
+           <a href="{% url 'validate' object.id %}" class="btn btn-sm btn-info">validate</a><br><br>
          {% endif %}
-          {% if object.is_verified %}
-             <br>Verified by:
-                   <a href="{{ object.verified_by }}"> {{ object.verified_by }}</a>
-            <span>&#9989;</span><br>
-            <a href="{% url 'validate' object.id %}" class="btn btn-sm btn-info">validate</a><br><br>
-          {% endif %}
       {% endif %}
+      </li>
     {% endfor %}
-    <li><a href="{% url 'add_event' %}">Add Living Event</a></li><br>
+    </ul>
+    <li><a id="add-living-event" href="{% url 'add_event' %}">Add Living Event</a></li><br>
   {% else %}
     <p>You have not added any addresses</p>
      <li><a href="{% url 'add_event' %}">Add Living Event</a></li><br>
